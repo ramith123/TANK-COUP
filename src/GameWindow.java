@@ -6,6 +6,8 @@ import java.awt.image.BufferStrategy; // need this to implement page flipping
 
 public class GameWindow extends JFrame implements Runnable {
 	private static final int NUM_BUFFERS = 2; // used for page flipping
+	private int heightOffset = 30;
+	private int widthOffset = 7;
 
 	private int pWidth, pHeight; // width and height of screen
 
@@ -24,8 +26,10 @@ public class GameWindow extends JFrame implements Runnable {
 	public GameWindow() {
 
 		super("TANK COUP");
+		pWidth = 1080;
+		pHeight = 720;
 		initFullScreen();
-		image = new BufferedImage(pWidth, pHeight, BufferedImage.TYPE_INT_RGB);
+		image = new BufferedImage(pWidth, pHeight, BufferedImage.TYPE_INT_ARGB);
 		// soundManager = SoundManager.getInstance();
 
 		startGame();
@@ -110,6 +114,8 @@ public class GameWindow extends JFrame implements Runnable {
 
 		Graphics2D imageContext = (Graphics2D) image.getGraphics();
 
+		imageContext.fillRect(0, 0, pWidth, pHeight);
+
 		// bgManager.draw(imageContext);
 		// tileMap.draw(imageContext);
 
@@ -122,9 +128,11 @@ public class GameWindow extends JFrame implements Runnable {
 		// window
 		// drawButtons(imageContext); // draw the buttons
 
-		gameOverMessage(imageContext);
+		// gameOverMessage(imageContext);
+		Tank t = new Tank(Color.red);
+		t.draw(imageContext);
 		Graphics2D g2 = (Graphics2D) gScr;
-		g2.drawImage(image, 0, 0, pWidth, pHeight, null);
+		g2.drawImage(image, widthOffset, heightOffset, pWidth, pHeight, null);
 
 		imageContext.dispose();
 		g2.dispose();
@@ -150,13 +158,12 @@ public class GameWindow extends JFrame implements Runnable {
 		// we can now adjust the display modes, if we wish
 
 		// showCurrentMode();
-
-		pWidth = 1280;
-		pHeight = 720;
-		setMinimumSize(new Dimension(pWidth, pHeight));
+		setLocationRelativeTo(null);
 
 		System.out.println("Width of window is " + pWidth);
 		System.out.println("Height of window is " + pHeight);
+		setPreferredSize(new Dimension(pWidth, pHeight));
+		pack();
 		setVisible(true);
 		try {
 			createBufferStrategy(NUM_BUFFERS);
@@ -197,7 +204,7 @@ public class GameWindow extends JFrame implements Runnable {
 
 	private void gameOverMessage(Graphics g1) {
 		Graphics2D g = (Graphics2D) g1;
-		g.setClip(0, 0, pWidth, pHeight);
+		// g.setClip(0, 0, pWidth, pHeight);
 		Font font = new Font("SansSerif", Font.BOLD, 24);
 		FontMetrics metrics = this.getFontMetrics(font);
 
@@ -209,8 +216,6 @@ public class GameWindow extends JFrame implements Runnable {
 		g.setColor(Color.BLUE);
 		g.setFont(font);
 		g.drawString(msg, x, y);
-		g.setBackground(Color.RED);
-		g.clearRect(0, 0, pWidth, pHeight);
 
 	}
 

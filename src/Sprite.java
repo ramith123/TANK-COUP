@@ -1,0 +1,6 @@
+/**
+ * Sprite
+ */
+public class Sprite {
+
+}
