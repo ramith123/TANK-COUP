@@ -8,7 +8,9 @@ public class GameWindow extends JFrame implements Runnable {
 	private static final int NUM_BUFFERS = 2; // used for page flipping
 	private int heightOffset = 30;
 	private int widthOffset = 7;
-
+	private int testDeg = 0;
+	private Color testColor = Color.GREEN;
+	private boolean testDir = false;
 	private int pWidth, pHeight; // width and height of screen
 
 	private Thread gameThread = null; // the thread that controls the game
@@ -83,6 +85,17 @@ public class GameWindow extends JFrame implements Runnable {
 
 	public void gameUpdate() {
 		if (!isPaused) {
+			if (testDeg < 180 & !testDir)
+				testDeg += 5;
+			else {
+				testDir = true;
+				testDeg -= 5;
+				testColor = Color.RED;
+			}
+			if (testDeg < 0) {
+				testDir = false;
+				testColor = Color.GREEN;
+			}
 
 		}
 
@@ -129,8 +142,8 @@ public class GameWindow extends JFrame implements Runnable {
 		// drawButtons(imageContext); // draw the buttons
 
 		// gameOverMessage(imageContext);
-		Tank t = new Tank(Color.red);
-		t.draw(imageContext);
+		Tank t = new Tank(testColor);
+		t.draw(imageContext, testDeg);
 		Graphics2D g2 = (Graphics2D) gScr;
 		g2.drawImage(image, widthOffset, heightOffset, pWidth, pHeight, null);
 
