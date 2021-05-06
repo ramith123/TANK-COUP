@@ -9,8 +9,7 @@ public class GameWindow extends JFrame implements Runnable {
 	private int heightOffset = 30;
 	private int widthOffset = 7;
 	private int testDeg = 0;
-	private Color testColor = Color.GREEN;
-	private boolean testDir = false;
+
 	private int pWidth, pHeight; // width and height of screen
 
 	private Thread gameThread = null; // the thread that controls the game
@@ -25,9 +24,13 @@ public class GameWindow extends JFrame implements Runnable {
 	private Graphics gScr;
 	private BufferStrategy bufferStrategy;
 
-	public GameWindow() {
+	private Tank t;
+	private Color testColor = Color.GREEN;
+	private boolean testDir = false;
 
+	public GameWindow() {
 		super("TANK COUP");
+		t = new Tank(50, 50, testColor);
 		pWidth = 1080;
 		pHeight = 720;
 		initFullScreen();
@@ -86,16 +89,19 @@ public class GameWindow extends JFrame implements Runnable {
 	public void gameUpdate() {
 		if (!isPaused) {
 			if (testDeg < 180 & !testDir)
-				testDeg += 5;
+				testDeg += 5; // TODO: Change this to a barrel degree function in Tank
+
 			else {
 				testDir = true;
 				testDeg -= 5;
-				testColor = Color.RED;
+				t.rotateBarrel(testDeg);
 			}
 			if (testDeg < 0) {
 				testDir = false;
-				testColor = Color.GREEN;
+
 			}
+			t.rotateBarrel(testDeg);
+			t.rotateTank(testDeg);
 
 		}
 
@@ -142,8 +148,8 @@ public class GameWindow extends JFrame implements Runnable {
 		// drawButtons(imageContext); // draw the buttons
 
 		// gameOverMessage(imageContext);
-		Tank t = new Tank(testColor);
-		t.draw(imageContext, testDeg);
+
+		t.draw(imageContext);
 		Graphics2D g2 = (Graphics2D) gScr;
 		g2.drawImage(image, widthOffset, heightOffset, pWidth, pHeight, null);
 

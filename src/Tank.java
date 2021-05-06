@@ -2,7 +2,6 @@ import javax.swing.*; // need this for GUI objects
 import javax.swing.border.StrokeBorder;
 import java.lang.Math;
 import java.awt.geom.*;
-import java.awt.Shape.*;
 import java.awt.*; // need this for certain AWT classes
 import java.awt.image.BufferedImage;
 
@@ -11,61 +10,71 @@ public class Tank {
     private int wheelAmt = 3;
     private int gapSize = 10;
     private int verticalOffset = 5;
+    private int x, y;
     private int xSIZE = 200;
-    private int ySIZE = 200;
+    private int ySIZE = 150;
     private int railStrokeSize = 3;
     private int bodyStrokeSize = 1;
     private int barHeight = 10;
     private int bodyHeight = 30;
     private double trapRatio = 0.2;
+    private int xBound, yBound;
+    private Rectangle boundingRect;
+    private double tankRotation, barrelRotation;
 
     private double railShortWidth, railLongWidth;
     BufferedImage image;
     Color color, colorLight, colorLighter, colorBorder;
 
-    public Tank(Color color) {
+    public Tank(int x, int y, Color color) {
+        this.x = x;
+        this.y = y;
         this.color = getDarkerColor(color, 0.3);
         colorBorder = color.darker();
         colorLight = getLighterColor(color, 0.4);
         colorLighter = getLighterColor(color, 0.7);
         railShortWidth = (wheelSize * wheelAmt + gapSize * (wheelAmt - 1)) * 1.1;
         railLongWidth = railShortWidth + (trapRatio * railShortWidth);
-        System.out.println(railLongWidth);
         xSIZE = (int) (railLongWidth + (railStrokeSize * 2));
+        xBound = xSIZE;
+        yBound = (int) (ySIZE - railShortWidth / 4) - verticalOffset - wheelSize - railStrokeSize / 2 - barHeight
+                - bodyHeight;
+        // image = new BufferedImage(xSIZE, ySIZE, BufferedImage.TYPE_INT_ARGB);
+    }
+
+    public void draw(Graphics2D gameG) {
         image = new BufferedImage(xSIZE, ySIZE, BufferedImage.TYPE_INT_ARGB);
+        AffineTransform at = renderTank();
+        at.setToTranslation(x, y);
+        at.rotate(tankRotation, xSIZE / 2, ySIZE);
+
+        gameG.drawImage(image, at, null);
+        gameG.setColor(Color.RED);
+        boundingRect = new Rectangle(x, y + yBound, xBound, ySIZE - yBound);
+        gameG.draw(boundingRect);
     }
 
-    public void draw(Graphics2D gameG, double degree) {
-        renderTank(degree);
-        gameG.drawImage(image, 0, 0, xSIZE, ySIZE, null);
-
-    }
-
-    private void renderTank(double degree) {
+    private AffineTransform renderTank() {
         Graphics2D g = (Graphics2D) image.getGraphics();
-        g.setColor(Color.GREEN);
-        g.drawRect(1, 1, xSIZE - 2, ySIZE - 2);
+
         renderWheels(g);
         renderRails(g);
         renderBar(g);
-        renderBarrel(g, degree);
+        renderBarrel(g);
         renderDome(g);
         renderBody(g);
-
+        AffineTransform at = g.getTransform();
+        return at;
     }
 
-    private void renderBarrel(Graphics2D g, double degree) {
-        if (degree > 180 && degree < 270)
-            degree = 180;
-        if ((degree > 270 && degree < 360))
-            degree = 0;
-        degree = Math.toRadians(-degree);
+    private void renderBarrel(Graphics2D g) {
+
         Shape barrel = new Rectangle2D.Double(0, 0, railShortWidth / 2, barHeight);
         AffineTransform transform = g.getTransform();
         transform.setToTranslation((xSIZE / 2), (ySIZE - barrel.getBounds().height) - verticalOffset - wheelSize
                 - railStrokeSize / 2 - barHeight - bodyHeight);
         transform.quadrantRotate(0, 0, barHeight / 2);
-        transform.rotate(degree, 0, barHeight / 2);
+        transform.rotate(barrelRotation, 0, barHeight / 2);
         g.setTransform(transform);
         g.setColor(color);
         g.fill(barrel);
@@ -115,7 +124,6 @@ public class Tank {
         transform.setToTranslation((xSIZE - rect.getBounds().width) / 2,
                 (ySIZE - rect.getBounds().height) - verticalOffset - wheelSize - railStrokeSize / 2);
         g.setTransform(transform);
-
         g.setColor(color);
         g.fill(rect);
     }
@@ -165,6 +173,34 @@ public class Tank {
         float[] c = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
         c[2] -= hue; // saturation
         return (Color.getHSBColor(c[0], c[1], c[2]));
+    }
+
+    private int getYsize() {
+        int[] pixels = image.getRGB(0, 0, xSIZE, ySIZE, null, 0, xSIZE);
+        for (int i = 0; i < pixels.length; i++) {
+            if (pixels[i] != 0) {
+                return i / xSIZE;
+            }
+        }
+        return -1;
+
+    }
+
+    public void rotateTank(int degree) {
+        System.out.println(degree);
+        tankRotation = Math.toRadians(degree);
+    }
+
+    public Rectangle getBoundingRect() {
+        return boundingRect;
+    }
+
+    public void rotateBarrel(int degree) {
+        if (degree > 180 && degree < 270)
+            degree = 180;
+        if ((degree > 270 && degree < 360))
+            degree = 0;
+        barrelRotation = Math.toRadians(-degree);
     }
 
 }
