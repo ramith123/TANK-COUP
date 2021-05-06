@@ -19,7 +19,7 @@ public class Tank {
     private int bodyHeight = 30;
     private double trapRatio = 0.2;
     private int xBound, yBound;
-    private Rectangle boundingRect;
+    private Shape boundingRect;
     private double tankRotation, barrelRotation;
 
     private double railShortWidth, railLongWidth;
@@ -50,7 +50,8 @@ public class Tank {
 
         gameG.drawImage(image, at, null);
         gameG.setColor(Color.RED);
-        boundingRect = new Rectangle(x, y + yBound, xBound, ySIZE - yBound);
+        boundingRect = getBoundingRect();
+
         gameG.draw(boundingRect);
     }
 
@@ -191,8 +192,12 @@ public class Tank {
         tankRotation = Math.toRadians(degree);
     }
 
-    public Rectangle getBoundingRect() {
-        return boundingRect;
+    public Shape getBoundingRect() {
+        AffineTransform at = new AffineTransform();
+        at.rotate(tankRotation, x + xBound / 2, y + ySIZE);
+        Shape s = new Rectangle(x, y + yBound, xBound, ySIZE - yBound);
+
+        return at.createTransformedShape(s);
     }
 
     public void rotateBarrel(int degree) {
