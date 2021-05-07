@@ -8,7 +8,6 @@ public class GameWindow extends JFrame implements Runnable {
 	private static final int NUM_BUFFERS = 2; // used for page flipping
 	private int heightOffset = 30;
 	private int widthOffset = 7;
-	private int testDeg = 0;
 
 	private int pWidth, pHeight; // width and height of screen
 
@@ -24,13 +23,11 @@ public class GameWindow extends JFrame implements Runnable {
 	private Graphics gScr;
 	private BufferStrategy bufferStrategy;
 
-	private Tank t;
-	private Color testColor = Color.GREEN;
-	private boolean testDir = false;
+	private TerrainEntityManager terrainEntityManager;
 
 	public GameWindow() {
 		super("TANK COUP");
-		t = new Tank(50, 50, testColor);
+
 		pWidth = 1080;
 		pHeight = 720;
 		initFullScreen();
@@ -88,20 +85,7 @@ public class GameWindow extends JFrame implements Runnable {
 
 	public void gameUpdate() {
 		if (!isPaused) {
-			if (testDeg < 180 & !testDir)
-				testDeg += 5; // TODO: Change this to a barrel degree function in Tank
-
-			else {
-				testDir = true;
-				testDeg -= 5;
-				t.rotateBarrel(testDeg);
-			}
-			if (testDeg < 0) {
-				testDir = false;
-
-			}
-			t.rotateBarrel(testDeg);
-			t.rotateTank(testDeg);
+			terrainEntityManager.gameUpdate();
 
 		}
 
@@ -134,22 +118,7 @@ public class GameWindow extends JFrame implements Runnable {
 		Graphics2D imageContext = (Graphics2D) image.getGraphics();
 
 		imageContext.fillRect(0, 0, pWidth, pHeight);
-
-		// bgManager.draw(imageContext);
-		// tileMap.draw(imageContext);
-
-		// if (isAnimShown)
-		// animation.draw(imageContext); // draw the animation
-
-		// imageEffect.draw(imageContext); // draw the image effect
-
-		// Graphics2D g2 = (Graphics2D) getGraphics(); // get the graphics context for
-		// window
-		// drawButtons(imageContext); // draw the buttons
-
-		// gameOverMessage(imageContext);
-
-		t.draw(imageContext);
+		terrainEntityManager.draw(imageContext);
 		Graphics2D g2 = (Graphics2D) gScr;
 		g2.drawImage(image, widthOffset, heightOffset, pWidth, pHeight, null);
 
@@ -212,7 +181,7 @@ public class GameWindow extends JFrame implements Runnable {
 
 	private void startGame() {
 		if (gameThread == null) {
-
+			terrainEntityManager = new TerrainEntityManager(this);
 			gameThread = new Thread(this);
 			gameThread.start();
 
