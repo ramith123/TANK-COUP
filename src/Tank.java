@@ -27,7 +27,7 @@ public class Tank {
     BufferedImage image;
     Color color, colorLight, colorLighter, colorBorder;
 
-    public Tank(int x, int y, Color color) {
+    public Tank(Color color) {
 
         this.color = getDarkerColor(color, 0.3);
         colorBorder = color.darker();
