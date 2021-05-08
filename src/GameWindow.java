@@ -154,7 +154,6 @@ public class GameWindow extends JFrame implements Runnable {
 		try {
 			createBufferStrategy(NUM_BUFFERS);
 		} catch (Exception e) {
-			System.out.println("Error while creating buffer strategy " + e);
 			System.exit(0);
 		}
 

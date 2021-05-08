@@ -33,6 +33,7 @@ public class Terrain {
 
     public static double angleTo(Point2D from, Point2D to) {
         double angle = Math.atan2(to.getY() - from.getY(), to.getX() - from.getX());
+
         return angle;
     }
 }

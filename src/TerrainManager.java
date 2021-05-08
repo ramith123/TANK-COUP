@@ -10,6 +10,7 @@ public class TerrainManager {
     private Terrain terrain;
     private int xSIZE, ySIZE;
     private ArrayList<Point2D> points;
+    public int pointSize;
 
     public TerrainManager() {
         terrain = new Terrain();
@@ -46,8 +47,11 @@ public class TerrainManager {
         points.remove(new Point2D.Double(GameWindow.pWidth, GameWindow.pHeight));
         points.remove(new Point2D.Double(0, GameWindow.pHeight));
 
-        for (Point2D i : points) {
-            System.out.println(i.toString());
-        }
+        pointSize = points.size();
+
+    }
+
+    public Point2D getPoint(int index) {
+        return points.get(index);
     }
 }

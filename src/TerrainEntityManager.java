@@ -1,6 +1,7 @@
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import java.io.*;
 import java.util.ArrayList;
 import javax.swing.JFrame;
@@ -16,6 +17,7 @@ public class TerrainEntityManager {
     private int testDeg = 0;
     private JFrame window;
     private TerrainManager terrainManager;
+    private int terrainIndex;
     /*
      * private GraphicsConfiguration gc;
      * 
@@ -29,12 +31,13 @@ public class TerrainEntityManager {
         t1 = new Tank(50, 50, testColor);
         t2 = new Tank(200, 50, testColor);
         terrainManager = new TerrainManager();
+        terrainIndex = 0;
     }
 
     public void draw(Graphics2D g) {
+        terrainManager.draw(g);
         t1.draw(g);
         t2.draw(g);
-        terrainManager.draw(g);
     }
 
     public void gameUpdate() {
@@ -45,15 +48,21 @@ public class TerrainEntityManager {
         else {
             testDir = true;
             testDeg -= 5;
-            t1.rotateBarrel(testDeg);
+            // t1.rotateBarrel(testDeg);
         }
         if (testDeg < 0) {
             testDir = false;
 
         }
-        // t.rotateBarrel(testDeg);
+        t1.rotateBarrel(testDeg);
         // t.rotateTank(testDeg);
+        int index = (t1.getSpeed() * terrainIndex) % (terrainManager.pointSize - 1);
+        Point2D p = terrainManager.getPoint(index);
 
+        // System.out.println(x + " " + y);
+        t1.move(p);
+        t1.rotateTank(Terrain.angleTo(p, terrainManager.getPoint(index + 1)));
+        terrainIndex++;
     }
 
     /**

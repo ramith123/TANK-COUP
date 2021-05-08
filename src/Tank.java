@@ -21,15 +21,14 @@ public class Tank {
     private int xBound, yBound;
     private Shape boundingRect;
     private double tankRotation, barrelRotation;
-    private double dx = 2;
+    private int dx = 5;
 
     private double railShortWidth, railLongWidth;
     BufferedImage image;
     Color color, colorLight, colorLighter, colorBorder;
 
     public Tank(int x, int y, Color color) {
-        this.x = x;
-        this.y = y;
+
         this.color = getDarkerColor(color, 0.3);
         colorBorder = color.darker();
         colorLight = getLighterColor(color, 0.4);
@@ -46,14 +45,22 @@ public class Tank {
     public void draw(Graphics2D gameG) {
         image = new BufferedImage(xSIZE, ySIZE, BufferedImage.TYPE_INT_ARGB);
         AffineTransform at = renderTank();
-        at.setToTranslation(x, y);
+        int newX = x - xSIZE / 2;
+        int newY = y - ySIZE;
+
+        at.setToTranslation(newX, newY);
         at.rotate(tankRotation, xSIZE / 2, ySIZE);
 
-        gameG.drawImage(image, at, null);
         gameG.setColor(Color.RED);
-        boundingRect = getBoundingRect();
-
+        boundingRect = getBoundingRect(newX, newY);
         gameG.draw(boundingRect);
+        gameG.drawImage(image, at, null);
+
+    }
+
+    public void move(Point2D point) {
+        this.x = (int) point.getX();
+        this.y = (int) point.getY();
     }
 
     private AffineTransform renderTank() {
@@ -188,12 +195,12 @@ public class Tank {
 
     }
 
-    public void rotateTank(int degree) {
+    public void rotateTank(double degree) {
 
-        tankRotation = Math.toRadians(degree);
+        tankRotation = degree;
     }
 
-    public Shape getBoundingRect() {
+    public Shape getBoundingRect(int x, int y) {
         AffineTransform at = new AffineTransform();
         at.rotate(tankRotation, x + xBound / 2, y + ySIZE);
         Shape s = new Rectangle(x, y + yBound, xBound, ySIZE - yBound);
@@ -201,12 +208,16 @@ public class Tank {
         return at.createTransformedShape(s);
     }
 
-    public void rotateBarrel(int degree) {
+    public void rotateBarrel(double degree) {
         if (degree > 180 && degree < 270)
             degree = 180;
         if ((degree > 270 && degree < 360))
             degree = 0;
         barrelRotation = Math.toRadians(-degree);
+    }
+
+    public int getSpeed() {
+        return dx;
     }
 
 }
