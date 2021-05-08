@@ -21,6 +21,7 @@ public class Tank {
     private int xBound, yBound;
     private Shape boundingRect;
     private double tankRotation, barrelRotation;
+    private double dx = 2;
 
     private double railShortWidth, railLongWidth;
     BufferedImage image;
@@ -188,7 +189,7 @@ public class Tank {
     }
 
     public void rotateTank(int degree) {
-        System.out.println(degree);
+
         tankRotation = Math.toRadians(degree);
     }
 
