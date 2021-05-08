@@ -8,8 +8,8 @@ public class GameWindow extends JFrame implements Runnable {
 	private static final int NUM_BUFFERS = 2; // used for page flipping
 	private int heightOffset = 30;
 	private int widthOffset = 7;
-
-	private int pWidth, pHeight; // width and height of screen
+	public static int pWidth = 1080;
+	public static int pHeight = 720;
 
 	private Thread gameThread = null; // the thread that controls the game
 	private volatile boolean isRunning = false; // used to stop the game thread
@@ -28,8 +28,6 @@ public class GameWindow extends JFrame implements Runnable {
 	public GameWindow() {
 		super("TANK COUP");
 
-		pWidth = 1080;
-		pHeight = 720;
 		initFullScreen();
 		image = new BufferedImage(pWidth, pHeight, BufferedImage.TYPE_INT_ARGB);
 		// soundManager = SoundManager.getInstance();

@@ -15,7 +15,7 @@ public class TerrainEntityManager {
     private boolean testDir = false;
     private int testDeg = 0;
     private JFrame window;
-
+    private TerrainManager terrainManager;
     /*
      * private GraphicsConfiguration gc;
      * 
@@ -28,16 +28,13 @@ public class TerrainEntityManager {
         this.window = window;
         t1 = new Tank(50, 50, testColor);
         t2 = new Tank(200, 50, testColor);
-
-        // loadTileImages();
-
-        // loadCreatureSprites();
-        // loadPowerUpSprites();
+        terrainManager = new TerrainManager();
     }
 
     public void draw(Graphics2D g) {
         t1.draw(g);
         t2.draw(g);
+        terrainManager.draw(g);
     }
 
     public void gameUpdate() {
