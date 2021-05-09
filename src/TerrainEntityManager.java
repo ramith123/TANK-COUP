@@ -29,7 +29,8 @@ public class TerrainEntityManager {
         t1 = new Tank(testColor);
         t2 = new Tank(testColor);
         terrainManager = new TerrainManager();
-        terrainIndex = 0;
+        terrainIndex = 200;
+        moveRight();
     }
 
     public void draw(Graphics2D g) {
@@ -54,11 +55,26 @@ public class TerrainEntityManager {
         }
         t1.rotateBarrel(testDeg);
 
+    }
+
+    public void moveRight() {
+        terrainIndex++;
         int index = (t1.getSpeed() * terrainIndex) % (terrainManager.pointSize - 1);
         Point2D p = terrainManager.getPoint(index);
         t1.move(p);
         t1.rotateTank(Terrain.angleTo(p, terrainManager.getPoint(index + 1)));
-        terrainIndex++;
+        ;
+        System.out.println(terrainIndex);
     }
 
+    public void moveLeft() {
+        terrainIndex--;
+        if (terrainIndex < 0)
+            terrainIndex = 0;
+        int index = (t1.getSpeed() * terrainIndex) % (terrainManager.pointSize - 1);
+        Point2D p = terrainManager.getPoint(index);
+        t1.move(p);
+        t1.rotateTank(Terrain.angleTo(p, terrainManager.getPoint(index + 1)));
+        ;
+    }
 }

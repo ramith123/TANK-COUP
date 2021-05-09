@@ -25,6 +25,8 @@ public class TerrainManager {
         at.setToTranslation(0, 0);
         g.setColor(Color.CYAN);
         g.transform(at);
+        // g.setStroke(new BasicStroke(10, BasicStroke.CAP_ROUND,
+        // BasicStroke.JOIN_ROUND));
         g.fill(s);
 
     }

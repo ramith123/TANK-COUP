@@ -1,10 +1,10 @@
 import javax.swing.*; // need this for GUI objects
 import java.awt.*; // need this for certain AWT classes
 import java.awt.image.BufferedImage;
-
+import java.awt.event.*;
 import java.awt.image.BufferStrategy; // need this to implement page flipping
 
-public class GameWindow extends JFrame implements Runnable {
+public class GameWindow extends JFrame implements Runnable, KeyListener {
 	private static final int NUM_BUFFERS = 2; // used for page flipping
 	private int heightOffset = 30;
 	private int widthOffset = 7;
@@ -31,7 +31,7 @@ public class GameWindow extends JFrame implements Runnable {
 		initFullScreen();
 		image = new BufferedImage(pWidth, pHeight, BufferedImage.TYPE_INT_ARGB);
 		// soundManager = SoundManager.getInstance();
-
+		addKeyListener(this);
 		startGame();
 	}
 
@@ -201,6 +201,28 @@ public class GameWindow extends JFrame implements Runnable {
 		g.setColor(Color.BLUE);
 		g.setFont(font);
 		g.drawString(msg, x, y);
+
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		if (e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_A) {
+
+			terrainEntityManager.moveLeft();
+		}
+		if (e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_D) {
+			terrainEntityManager.moveRight();
+		}
+
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
 
 	}
 
