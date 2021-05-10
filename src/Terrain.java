@@ -1,7 +1,7 @@
 import javax.swing.*; // need this for GUI objects
 import javax.swing.border.StrokeBorder;
 import java.lang.Math;
-
+import java.util.ArrayList;
 import java.awt.geom.*;
 import java.awt.*; // need this for certain AWT classes
 import java.awt.image.BufferedImage;
@@ -21,26 +21,36 @@ public class Terrain {
         int screenWidth = GameWindow.pWidth;
         int screenHeight = GameWindow.pHeight;
         int numberOfPoints = 4;
-        int maxHeight = 500;
-        int curveLength = screenWidth / numberOfPoints;
-        int xs[] = { 0, curveLength, curveLength * 2, curveLength * 3, curveLength * 4 };
-        int ys[] = { screenHeight / 2, screenHeight / 2, maxHeight, screenHeight / 2, screenHeight / 2 };
-        double xStep = xs[1] / 2;
 
-        path.moveTo(xs[0], ys[0]);
-        for (int i = 0; i < xs.length - 1; i++)
-            path.curveTo(xs[i], ys[i], xs[i], ys[i], (xs[i] + xs[i + 1]) / 2, (ys[i] + ys[i + 1]) / 2);
-        // path.curveTo(xs[1], ys[1], xs[1], ys[1], (xs[1] + xs[2]) / 2, (ys[1] + ys[2])
-        // / 2);
-        // path.curveTo(xs[2], ys[2], xs[2], ys[2], (xs[2] + xs[3]) / 2, (ys[2] + ys[3])
-        // / 2);
-        // path.curveTo(xs[3], ys[3], xs[3], ys[3], (xs[3] + xs[4]) / 2, (ys[3] + ys[4])
-        // / 2);
-        path.curveTo(xs[4], ys[4], xs[4], ys[4], xs[4], ys[4]);
+        double[][] points = createPoints(numberOfPoints);
+
+        path.moveTo(points[0][0], points[0][1]);
+        double x, y, hx, hy;
+        x = y = hx = hy = 0;
+        for (int i = 0; i < points.length - 1; i++) {
+            x = points[i][0];
+            y = points[i][1];
+            hx = points[i + 1][0];
+            hy = points[i + 1][1];
+            path.curveTo(x, y, x, y, (x + hx) / 2, (y + hy) / 2);
+        }
+        int lastIndex = points.length - 1;
+        x = points[lastIndex][0];
+        y = points[lastIndex][1];
+        path.curveTo(x, y, x, y, x, y);
         path.lineTo(screenWidth, screenHeight);
         path.lineTo(0, screenHeight);
         path.closePath();
         terrainShape = path;
+    }
+
+    private double[][] createPoints(int numberOfPoints) {
+        int curveLength = GameWindow.pWidth / numberOfPoints;
+        int screenHeight = GameWindow.pHeight;
+        double[][] arr = { { 0, 200 }, { curveLength, screenHeight / 2 }, { curveLength * 2, 500 },
+                { curveLength * 3, 200 }, { curveLength * 4, 100 } };
+        return arr;
+        // TODO: Finish this
     }
 
     public Shape getTerrainShape() {
