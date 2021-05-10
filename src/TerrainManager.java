@@ -53,7 +53,18 @@ public class TerrainManager {
 
     }
 
-    public Point2D getPoint(int index) {
-        return points.get(index);
+    public Point2D getNextPoint(Point2D p) {
+        return points.get(points.indexOf(p) + 1);
+    }
+
+    public Point2D getIndex(int x) {
+        Point2D p = null;
+        for (int i = 0; i < points.size(); i++) {
+            p = points.get(i);
+            if ((int) p.getX() == x) {
+                return p;
+            }
+        }
+        return p;
     }
 }

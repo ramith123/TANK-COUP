@@ -26,8 +26,8 @@ public class TerrainEntityManager {
 
     public TerrainEntityManager(JFrame window) {
         this.window = window;
-        t1 = new Tank(testColor);
-        t2 = new Tank(testColor);
+        t1 = new Tank(100, 200, testColor);
+        t2 = new Tank(700, 200, Color.RED);
         terrainManager = new TerrainManager();
         terrainIndex = 200;
         moveRight();
@@ -58,23 +58,14 @@ public class TerrainEntityManager {
     }
 
     public void moveRight() {
-        terrainIndex++;
-        int index = (t1.getSpeed() * terrainIndex) % (terrainManager.pointSize - 1);
-        Point2D p = terrainManager.getPoint(index);
-        t1.move(p);
-        t1.rotateTank(Terrain.angleTo(p, terrainManager.getPoint(index + 1)));
-        ;
-        System.out.println(terrainIndex);
+
+        t1.moveRight(terrainManager);
+        t2.moveRight(terrainManager);
     }
 
     public void moveLeft() {
-        terrainIndex--;
-        if (terrainIndex < 0)
-            terrainIndex = 0;
-        int index = (t1.getSpeed() * terrainIndex) % (terrainManager.pointSize - 1);
-        Point2D p = terrainManager.getPoint(index);
-        t1.move(p);
-        t1.rotateTank(Terrain.angleTo(p, terrainManager.getPoint(index + 1)));
-        ;
+
+        t1.moveLeft(terrainManager);
+        t2.moveLeft(terrainManager);
     }
 }

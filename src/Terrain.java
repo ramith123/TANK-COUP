@@ -53,7 +53,7 @@ public class Terrain {
             double temp[] = { xAxis, yAxis };
             arr[i] = temp;
         }
-        double temp[] = { screenWidth, screenHeight };
+        double temp[] = { screenWidth, screenHeight / 2 };
         arr[numberOfPoints + 1] = temp;
         return arr;
     }
@@ -61,7 +61,7 @@ public class Terrain {
     public Shape getTerrainShape() {
         return terrainShape;
     }
-
+    // Old Map generation
     // public void generateShape() {
     // GeneralPath path = new GeneralPath();
     // int screenWidth = GameWindow.pWidth;
