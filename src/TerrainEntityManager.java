@@ -30,7 +30,7 @@ public class TerrainEntityManager {
         t2 = new Tank(700, 200, Color.RED);
         terrainManager = new TerrainManager();
         terrainIndex = 200;
-        moveRight();
+        rightKeyPressed();
     }
 
     public void draw(Graphics2D g) {
@@ -57,13 +57,13 @@ public class TerrainEntityManager {
 
     }
 
-    public void moveRight() {
+    public void rightKeyPressed() {
 
         t1.moveRight(terrainManager);
         t2.moveRight(terrainManager);
     }
 
-    public void moveLeft() {
+    public void leftKeyPressed() {
 
         t1.moveLeft(terrainManager);
         t2.moveLeft(terrainManager);

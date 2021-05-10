@@ -213,10 +213,10 @@ public class GameWindow extends JFrame implements Runnable, KeyListener {
 	public void keyPressed(KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_A) {
 
-			terrainEntityManager.moveLeft();
+			terrainEntityManager.leftKeyPressed();
 		}
 		if (e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_D) {
-			terrainEntityManager.moveRight();
+			terrainEntityManager.rightKeyPressed();
 		}
 
 	}

@@ -25,6 +25,7 @@ public class Tank {
     private int dx = 5;
     private boolean tanksPlaced = false;
     private int terrainIndex;
+
     private double railShortWidth, railLongWidth;
     BufferedImage image;
     Color color, colorLight, colorLighter, colorBorder;
@@ -253,6 +254,10 @@ public class Tank {
         Point2D p = terrainManager.getIndex(x - getSpeed());
         move(p);
         rotateTank(Terrain.angleTo(p, terrainManager.getNextPoint(p)));
+    }
+
+    public double getBarrelAngle() {
+        return barrelRotation;
     }
 
 }
