@@ -1,16 +1,13 @@
 import javax.swing.*; // need this for GUI objects
 import javax.swing.border.StrokeBorder;
 import java.lang.Math;
-import java.util.ArrayList;
+
 import java.awt.geom.*;
 import java.awt.*; // need this for certain AWT classes
-import java.awt.image.BufferedImage;
 
 public class Terrain {
     private Shape terrainShape;
-    private int yOffset = 100;
-    private int maxNumberOfPoints = 5;
-    private int minNumberOfPoints = 1;
+    private int yOffset = 200;
 
     public Terrain() {
         generateShape();
@@ -20,7 +17,7 @@ public class Terrain {
         GeneralPath path = new GeneralPath();
         int screenWidth = GameWindow.pWidth;
         int screenHeight = GameWindow.pHeight;
-        int numberOfPoints = 4;
+        int numberOfPoints = 5;
 
         double[][] points = createPoints(numberOfPoints);
 
@@ -45,12 +42,20 @@ public class Terrain {
     }
 
     private double[][] createPoints(int numberOfPoints) {
-        int curveLength = GameWindow.pWidth / numberOfPoints;
+        int screenWidth = GameWindow.pWidth;
         int screenHeight = GameWindow.pHeight;
-        double[][] arr = { { 0, 200 }, { curveLength, screenHeight / 2 }, { curveLength * 2, 500 },
-                { curveLength * 3, 200 }, { curveLength * 4, 100 } };
+        int curveLength = GameWindow.pWidth / numberOfPoints;
+
+        double[][] arr = new double[numberOfPoints + 2][2];
+        for (int i = 0; i <= numberOfPoints; i++) {
+            int xAxis = curveLength * i;
+            int yAxis = Util.getRandomNumberUsingNextInt((screenHeight / 2) - yOffset, (screenHeight / 2) + yOffset);
+            double temp[] = { xAxis, yAxis };
+            arr[i] = temp;
+        }
+        double temp[] = { screenWidth, screenHeight };
+        arr[numberOfPoints + 1] = temp;
         return arr;
-        // TODO: Finish this
     }
 
     public Shape getTerrainShape() {
