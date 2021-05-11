@@ -24,11 +24,12 @@ public class Tank {
     private double tankRotation, barrelRotation;
     private int dx = 5;
     private boolean tanksPlaced = false;
-    private int terrainIndex;
 
     private double railShortWidth, railLongWidth;
     BufferedImage image;
+    private AffineTransform tankTransform;
     Color color, colorLight, colorLighter, colorBorder;
+    private AffineTransform barrelTransform;
 
     public Tank(int x, int y, Color color) {
         this.x = x;
@@ -44,7 +45,6 @@ public class Tank {
         yBound = (int) (ySIZE - railShortWidth / 4) - verticalOffset - wheelSize - railStrokeSize / 2 - barHeight
                 - bodyHeight;
         // image = new BufferedImage(xSIZE, ySIZE, BufferedImage.TYPE_INT_ARGB);
-        terrainIndex = 200;
     }
 
     public void draw(Graphics2D gameG) {
@@ -55,11 +55,11 @@ public class Tank {
 
         at.setToTranslation(newX, newY);
         at.rotate(tankRotation, xSIZE / 2, ySIZE);
-
+        tankTransform = at;
         gameG.setColor(Color.RED);
         boundingRect = getBoundingRect(newX, newY);
         gameG.draw(boundingRect);
-        gameG.drawImage(image, at, null);
+        gameG.drawImage(image, tankTransform, null);
 
     }
 
@@ -87,12 +87,13 @@ public class Tank {
 
     private void renderBarrel(Graphics2D g) {
 
-        Shape barrel = new Rectangle2D.Double(0, 0, railShortWidth / 2, barHeight);
+        Shape barrel = new Rectangle2D.Double(0, 0, getBarrelWidth(), barHeight);
         AffineTransform transform = g.getTransform();
         transform.setToTranslation((xSIZE / 2), (ySIZE - barrel.getBounds().height) - verticalOffset - wheelSize
                 - railStrokeSize / 2 - barHeight - bodyHeight);
         transform.quadrantRotate(0, 0, barHeight / 2);
         transform.rotate(barrelRotation, 0, barHeight / 2);
+        barrelTransform = transform;
         g.setTransform(transform);
         g.setColor(color);
         g.fill(barrel);
@@ -209,7 +210,7 @@ public class Tank {
         tankRotation = degree;
     }
 
-    public Shape getBoundingRect(int x, int y) {
+    private Shape getBoundingRect(int x, int y) {
         AffineTransform at = new AffineTransform();
         at.rotate(tankRotation, x + xBound / 2, y + ySIZE);
         Rectangle2D s = new Rectangle(x, y + yBound, xBound, ySIZE - yBound);
@@ -217,12 +218,20 @@ public class Tank {
         return at.createTransformedShape(s);
     }
 
+    public Shape getBoundingRect() {
+        return boundingRect;
+    }
+
     public void rotateBarrel(double degree) {
         if (degree > 180 && degree < 270)
             degree = 180;
-        if ((degree > 270 && degree < 360))
+        if ((degree > 270 && degree < 360) || degree < 0)
             degree = 0;
         barrelRotation = Math.toRadians(-degree);
+    }
+
+    public void changeBarrelAngle(double angle) {
+        rotateBarrel(-Math.toDegrees(barrelRotation) + angle);
     }
 
     public int getSpeed() {
@@ -258,6 +267,28 @@ public class Tank {
 
     public double getBarrelAngle() {
         return barrelRotation;
+    }
+
+    public Point2D getTankPosition() {
+        return new Point2D.Double(this.x, this.y);
+    }
+
+    public double getTankAngle() {
+        return tankRotation;
+    }
+
+    public AffineTransform getBarrelTransform() {
+
+        return barrelTransform;
+    }
+
+    public AffineTransform getTankTransform() {
+
+        return tankTransform;
+    }
+
+    public double getBarrelWidth() {
+        return railShortWidth / 2;
     }
 
 }

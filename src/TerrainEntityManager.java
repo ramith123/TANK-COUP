@@ -10,9 +10,12 @@ import javax.swing.ImageIcon;
 public class TerrainEntityManager {
 
     private Tank t1, t2;
+    private Projectile shot;
     private Color testColor = Color.GREEN;
     private boolean testDir = false;
-    private int testDeg = 0;
+    private int p2TankAngle = 150;
+    private int p1TankAngle = 30;
+
     private JFrame window;
     private TerrainManager terrainManager;
     private int terrainIndex;
@@ -27,6 +30,7 @@ public class TerrainEntityManager {
     public TerrainEntityManager(JFrame window) {
         this.window = window;
         t1 = new Tank(100, 200, testColor);
+        t1.rotateBarrel(p1TankAngle);
         t2 = new Tank(700, 200, Color.RED);
         terrainManager = new TerrainManager();
         terrainIndex = 200;
@@ -37,23 +41,27 @@ public class TerrainEntityManager {
         terrainManager.draw(g);
         t1.draw(g);
         t2.draw(g);
+        if (shot != null)
+            shot.draw(g);
     }
 
     public void gameUpdate() {
 
-        if (testDeg < 180 & !testDir)
-            testDeg += 5;
+        // testDeg < 180 & !testDir)
+        // testDeg += 5;
 
-        else {
-            testDir = true;
-            testDeg -= 5;
-            // t1.rotateBarrel(testDeg);
-        }
-        if (testDeg < 0) {
-            testDir = false;
+        // {
+        // testDir = true;
+        // testDeg -= 5;
+        // // t1.rotateBarrel(testDeg);
+        // }
+        // testDeg < 0) {
+        // testDir = false;
 
-        }
-        t1.rotateBarrel(testDeg);
+        // }
+
+        if (shot != null)
+            shot.move();
 
     }
 
@@ -68,4 +76,24 @@ public class TerrainEntityManager {
         t1.moveLeft(terrainManager);
         t2.moveLeft(terrainManager);
     }
+
+    public void createProjectile() {
+        shot = new Projectile(t1);
+    }
+
+    private void destroyProjectile() {
+        if (shot != null && shot.isDestroyed()) {
+            shot = null;
+        }
+    }
+
+    public void upKeyPressed() {
+
+        t1.changeBarrelAngle(10);
+    }
+
+    public void downKeyPressed() {
+        t1.changeBarrelAngle(-10);
+    }
+
 }

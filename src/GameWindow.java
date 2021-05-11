@@ -45,7 +45,7 @@ public class GameWindow extends JFrame implements Runnable, KeyListener {
 					gameUpdate();
 				}
 				draw();
-				Thread.sleep(50);
+				Thread.sleep(30);
 			}
 		} catch (InterruptedException e) {
 		}
@@ -218,12 +218,20 @@ public class GameWindow extends JFrame implements Runnable, KeyListener {
 		if (e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_D) {
 			terrainEntityManager.rightKeyPressed();
 		}
+		if (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_W) {
+			terrainEntityManager.upKeyPressed();
+		}
+		if (e.getKeyCode() == KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_S) {
+			terrainEntityManager.downKeyPressed();
+		}
 
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-
+		if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+			terrainEntityManager.createProjectile();
+		}
 	}
 
 	// implementation of methods in KeyListener interface
