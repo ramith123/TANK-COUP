@@ -32,11 +32,12 @@ public class TerrainEntityManager {
         round = 0;
         roundStatus = 0;
         timer = GUITimer.getInstance();
+        timer.pauseTimer();
         this.window = window;
         terrainManager = new TerrainManager();
         t1 = new Tank(100, 200, Color.GREEN, fuelAmt, this);
         t1.rotateBarrel(p1TankAngle);
-        t2 = new Tank(700, 200, Color.RED, fuelAmt, this);
+        t2 = new Tank(GameWindow.pWidth - 100, 200, Color.RED, fuelAmt, this);
         t2.rotateBarrel(p2TankAngle);
         getRandomTank();
     }
