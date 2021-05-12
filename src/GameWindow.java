@@ -224,6 +224,9 @@ public class GameWindow extends JFrame implements Runnable, KeyListener {
 		if (e.getKeyCode() == KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_S) {
 			terrainEntityManager.downKeyPressed();
 		}
+		if (e.getKeyCode() == KeyEvent.VK_P) {
+			terrainEntityManager.pauseKeyPressed();
+		}
 
 	}
 

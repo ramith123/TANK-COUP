@@ -1,19 +1,14 @@
 
 import java.awt.*;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
-import java.io.*;
-import java.util.ArrayList;
 import java.util.Random;
 
 import javax.swing.JFrame;
-import javax.swing.ImageIcon;
 
 public class TerrainEntityManager {
 
     private Tank t1, t2, currentTank, otherTank;
     private Projectile shot;
-    private Color testColor = Color.GREEN;
 
     private int p2TankAngle = 150;
     private int p1TankAngle = 30;
@@ -23,6 +18,7 @@ public class TerrainEntityManager {
     private JFrame window;
     private TerrainManager terrainManager;
     private int roundStatus;
+    private GUITimer timer;
 
     /*
      * private GraphicsConfiguration gc;
@@ -35,6 +31,7 @@ public class TerrainEntityManager {
     public TerrainEntityManager(JFrame window) {
         round = 0;
         roundStatus = 0;
+        timer = GUITimer.getInstance();
         this.window = window;
         terrainManager = new TerrainManager();
         t1 = new Tank(100, 200, Color.GREEN, fuelAmt, this);
@@ -42,7 +39,6 @@ public class TerrainEntityManager {
         t2 = new Tank(700, 200, Color.RED, fuelAmt, this);
         t2.rotateBarrel(p2TankAngle);
         getRandomTank();
-
     }
 
     private void getRandomTank() {
@@ -65,9 +61,11 @@ public class TerrainEntityManager {
     }
 
     private void nextRound() {
+        currentTank.resetFuel();
         switchTanks();
         roundStatus = 0;
         round++;
+        timer.resetTimer();
     }
 
     private void nextStatus() {
@@ -89,13 +87,34 @@ public class TerrainEntityManager {
         }
         destroyProjectile();
         checkHealth();
+        // decreaseTime();
+        timer.getTimer();
+        timeCheck();
 
+    }
+
+    private void timeCheck() {
+        if (timer.getTimer() <= 0) {
+            nextRound();
+        }
     }
 
     private void checkHealth() {
+        if (t1.getHealth() <= 0 && t2.getHealth() <= 0) {
+            // TODO: draw
+
+        } else if (t1.getHealth() <= 0) {
+            // TODO: p2 wins
+        } else if (t2.getHealth() <= 0) {
+            // TODO:P1 wins
+
+        }
     }
 
     public void rightKeyPressed() {
+
+        if (timer.isPaused())
+            return;
         if (roundStatus == 0)
             currentTank.moveRight();
         else if (roundStatus == 1)
@@ -104,6 +123,8 @@ public class TerrainEntityManager {
     }
 
     public void leftKeyPressed() {
+        if (timer.isPaused())
+            return;
         if (roundStatus == 0)
             currentTank.moveLeft();
         else if (roundStatus == 1)
@@ -133,17 +154,23 @@ public class TerrainEntityManager {
     }
 
     public void upKeyPressed() {
+        if (timer.isPaused())
+            return;
         if (roundStatus == 1)
             currentTank.increasePower(5);
     }
 
     public void downKeyPressed() {
+        if (timer.isPaused())
+            return;
         if (roundStatus == 1)
             currentTank.decreasePower(5);
 
     }
 
     public void spaceKeyPressed() {
+        if (timer.isPaused())
+            return;
         nextStatus();
         if (roundStatus == 2) {
             createProjectile();
@@ -152,6 +179,13 @@ public class TerrainEntityManager {
 
     public TerrainManager getTerrainManager() {
         return terrainManager;
+    }
+
+    public void pauseKeyPressed() {
+        if (timer.isPaused())
+            timer.resumeTimer();
+        else
+            timer.pauseTimer();
     }
 
 }

@@ -32,7 +32,7 @@ public class Tank {
     private AffineTransform barrelTransform;
 
     private double health = 100;
-    private double fuel;
+    private double fuel, maxFuelAmount;
     private int power;
     private int powerUpperLimit = 50;
     private int powerLowerLimit = 20;
@@ -41,7 +41,7 @@ public class Tank {
     public Tank(int x, int y, Color color, int fuelAmount, TerrainEntityManager terrainEntityManager) {
         terrainManager = terrainEntityManager.getTerrainManager();
         power = powerLowerLimit;
-        fuel = fuelAmount;
+        fuel = maxFuelAmount = fuelAmount;
         this.x = x;
         this.y = y;
         this.color = getDarkerColor(color, 0.3);
@@ -363,7 +363,11 @@ public class Tank {
     }
 
     public void increaseFuel() {
-        fuel++;
+        fuel += maxFuelAmount * 0.5;
+    }
+
+    public void resetFuel() {
+        fuel = maxFuelAmount;
     }
 
 }
