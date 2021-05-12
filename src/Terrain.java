@@ -61,6 +61,11 @@ public class Terrain {
     public Shape getTerrainShape() {
         return terrainShape;
     }
+
+    public void setTerrainShape(Shape s) {
+        terrainShape = s;
+
+    }
     // Old Map generation
     // public void generateShape() {
     // GeneralPath path = new GeneralPath();
@@ -95,6 +100,7 @@ public class Terrain {
 
     public static double angleTo(Point2D from, Point2D to) {
         double angle = Math.atan2(to.getY() - from.getY(), to.getX() - from.getX());
+        // System.out.println(angle);
         return angle;
     }
 

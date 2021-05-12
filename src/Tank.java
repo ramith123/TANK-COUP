@@ -31,7 +31,17 @@ public class Tank {
     Color color, colorLight, colorLighter, colorBorder;
     private AffineTransform barrelTransform;
 
-    public Tank(int x, int y, Color color) {
+    private double health = 100;
+    private double fuel;
+    private int power;
+    private int powerUpperLimit = 50;
+    private int powerLowerLimit = 20;
+    private TerrainManager terrainManager;
+
+    public Tank(int x, int y, Color color, int fuelAmount, TerrainEntityManager terrainEntityManager) {
+        terrainManager = terrainEntityManager.getTerrainManager();
+        power = powerLowerLimit;
+        fuel = fuelAmount;
         this.x = x;
         this.y = y;
         this.color = getDarkerColor(color, 0.3);
@@ -45,6 +55,7 @@ public class Tank {
         yBound = (int) (ySIZE - railShortWidth / 4) - verticalOffset - wheelSize - railStrokeSize / 2 - barHeight
                 - bodyHeight;
         // image = new BufferedImage(xSIZE, ySIZE, BufferedImage.TYPE_INT_ARGB);
+        moveRight();
     }
 
     public void draw(Graphics2D gameG) {
@@ -58,7 +69,7 @@ public class Tank {
         tankTransform = at;
         gameG.setColor(Color.RED);
         boundingRect = getBoundingRect(newX, newY);
-        gameG.draw(boundingRect);
+        // gameG.draw(boundingRect);
         gameG.drawImage(image, tankTransform, null);
 
     }
@@ -66,7 +77,6 @@ public class Tank {
     public void move(Point2D point) {
         // Rectangle2D rect = boundingRect;
         // System.out.println(rect);
-
         this.x = (int) point.getX();
         this.y = (int) point.getY();
 
@@ -238,15 +248,16 @@ public class Tank {
         return dx;
     }
 
-    public void moveRight(TerrainManager terrainManager) {
-        if (!tanksPlaced) {
-            Point2D p = terrainManager.getIndex(x);
-            move(p);
-            rotateTank(Terrain.angleTo(p, terrainManager.getNextPoint(p)));
-            tanksPlaced = true;
-            return;
-        }
-        if (boundingRect != null && boundingRect.getBounds2D().getMaxX() >= GameWindow.pWidth)
+    public void moveRight() {
+        // if (!tanksPlaced) {
+        // Point2D p = terrainManager.getIndex(x);
+        // move(p);
+        // rotateTank(Terrain.angleTo(p, terrainManager.getNextPoint(p)));
+        // tanksPlaced = true;
+        // return;
+        // }
+        decreaseFuel();
+        if ((boundingRect != null && boundingRect.getBounds2D().getMaxX() >= GameWindow.pWidth) || getFuel() <= 0)
             return;
 
         Point2D p = terrainManager.getIndex(getSpeed() + x);
@@ -255,9 +266,10 @@ public class Tank {
         // System.out.println(terrainIndex);
     }
 
-    public void moveLeft(TerrainManager terrainManager) {
+    public void moveLeft() {
 
-        if (boundingRect != null && boundingRect.getBounds2D().getMinX() <= 0)
+        decreaseFuel();
+        if (boundingRect != null && boundingRect.getBounds2D().getMinX() <= 0 || getFuel() <= 0)
             return;
 
         Point2D p = terrainManager.getIndex(x - getSpeed());
@@ -289,6 +301,69 @@ public class Tank {
 
     public double getBarrelWidth() {
         return railShortWidth / 2;
+    }
+
+    public double getHealth() {
+        return this.health;
+    }
+
+    public double getFuel() {
+        return this.fuel;
+    }
+
+    @Override
+    public int hashCode() {
+        return color.hashCode();
+    }
+
+    public void increasePower(int by) {
+        power += by;
+        if (power > powerUpperLimit)
+            power = powerUpperLimit;
+        System.out.println(power);
+    }
+
+    public void decreasePower(int by) {
+        power -= by;
+        if (power < powerLowerLimit)
+            power = powerLowerLimit;
+        System.out.println(power);
+    }
+
+    public int getPower() {
+        return power;
+    }
+
+    public void decreaseHealth() {
+        health -= 20;
+        if (health <= 0) {
+            health = 0;
+        }
+        printHealth();
+    }
+
+    public void restoreHealth() {
+        health += 60;
+        if (health > 100)
+            health = 100;
+    }
+
+    public void instantDeath() {
+        health = 0;
+    }
+
+    public void printHealth() {
+
+        System.out.println("Health of " + color + " " + health);
+
+    }
+
+    public void decreaseFuel() {
+        fuel--;
+    }
+
+    public void increaseFuel() {
+        fuel++;
     }
 
 }

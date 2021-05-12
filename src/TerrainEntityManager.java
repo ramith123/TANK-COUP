@@ -4,21 +4,26 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Random;
+
 import javax.swing.JFrame;
 import javax.swing.ImageIcon;
 
 public class TerrainEntityManager {
 
-    private Tank t1, t2;
+    private Tank t1, t2, currentTank, otherTank;
     private Projectile shot;
     private Color testColor = Color.GREEN;
-    private boolean testDir = false;
+
     private int p2TankAngle = 150;
     private int p1TankAngle = 30;
+    private int fuelAmt = 15;
+    private int round;
 
     private JFrame window;
     private TerrainManager terrainManager;
-    private int terrainIndex;
+    private int roundStatus;
+
     /*
      * private GraphicsConfiguration gc;
      * 
@@ -28,13 +33,45 @@ public class TerrainEntityManager {
      */
 
     public TerrainEntityManager(JFrame window) {
+        round = 0;
+        roundStatus = 0;
         this.window = window;
-        t1 = new Tank(100, 200, testColor);
-        t1.rotateBarrel(p1TankAngle);
-        t2 = new Tank(700, 200, Color.RED);
         terrainManager = new TerrainManager();
-        terrainIndex = 200;
-        rightKeyPressed();
+        t1 = new Tank(100, 200, Color.GREEN, fuelAmt, this);
+        t1.rotateBarrel(p1TankAngle);
+        t2 = new Tank(700, 200, Color.RED, fuelAmt, this);
+        t2.rotateBarrel(p2TankAngle);
+        getRandomTank();
+
+    }
+
+    private void getRandomTank() {
+        Random r = new Random();
+        int i = r.nextInt(2);
+        if (i == 1) {
+            currentTank = t1;
+            otherTank = t2;
+        } else {
+            currentTank = t2;
+            otherTank = t1;
+        }
+
+    }
+
+    private void switchTanks() {
+        Tank temp = currentTank;
+        currentTank = otherTank;
+        otherTank = temp;
+    }
+
+    private void nextRound() {
+        switchTanks();
+        roundStatus = 0;
+        round++;
+    }
+
+    private void nextStatus() {
+        roundStatus++;
     }
 
     public void draw(Graphics2D g) {
@@ -47,53 +84,74 @@ public class TerrainEntityManager {
 
     public void gameUpdate() {
 
-        // testDeg < 180 & !testDir)
-        // testDeg += 5;
-
-        // {
-        // testDir = true;
-        // testDeg -= 5;
-        // // t1.rotateBarrel(testDeg);
-        // }
-        // testDeg < 0) {
-        // testDir = false;
-
-        // }
-
-        if (shot != null)
+        if (shot != null) {
             shot.move();
+        }
+        destroyProjectile();
+        checkHealth();
 
+    }
+
+    private void checkHealth() {
     }
 
     public void rightKeyPressed() {
+        if (roundStatus == 0)
+            currentTank.moveRight();
+        else if (roundStatus == 1)
+            currentTank.changeBarrelAngle(-8);
 
-        t1.moveRight(terrainManager);
-        t2.moveRight(terrainManager);
     }
 
     public void leftKeyPressed() {
-
-        t1.moveLeft(terrainManager);
-        t2.moveLeft(terrainManager);
+        if (roundStatus == 0)
+            currentTank.moveLeft();
+        else if (roundStatus == 1)
+            currentTank.changeBarrelAngle(8);
     }
 
     public void createProjectile() {
-        shot = new Projectile(t1);
+        shot = new Projectile(currentTank);
     }
 
     private void destroyProjectile() {
-        if (shot != null && shot.isDestroyed()) {
-            shot = null;
+        Point2D p = null;
+        if (shot != null) {
+            p = shot.collisionCheck(terrainManager);
+            Tank tankHit = shot.collisionCheck(otherTank);
+            if (shot.isDestroyed()) {
+                shot = null;
+                nextRound();
+            }
+            if (tankHit != null) {
+                tankHit.decreaseHealth();
+            }
+            if (p != null)
+                terrainManager.damageTerrain(p);
         }
+
     }
 
     public void upKeyPressed() {
-
-        t1.changeBarrelAngle(10);
+        if (roundStatus == 1)
+            currentTank.increasePower(5);
     }
 
     public void downKeyPressed() {
-        t1.changeBarrelAngle(-10);
+        if (roundStatus == 1)
+            currentTank.decreasePower(5);
+
+    }
+
+    public void spaceKeyPressed() {
+        nextStatus();
+        if (roundStatus == 2) {
+            createProjectile();
+        }
+    }
+
+    public TerrainManager getTerrainManager() {
+        return terrainManager;
     }
 
 }

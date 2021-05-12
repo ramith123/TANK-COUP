@@ -11,6 +11,8 @@ public class TerrainManager {
     private int xSIZE, ySIZE;
     private ArrayList<Point2D> points;
     public int pointSize;
+    private int craterSize = 100;
+    private boolean damageDone = false;
 
     public TerrainManager() {
         terrain = new Terrain();
@@ -54,6 +56,8 @@ public class TerrainManager {
     }
 
     public Point2D getNextPoint(Point2D p) {
+        if (damageDone)
+            return points.get(points.indexOf(p) - 1);
         return points.get(points.indexOf(p) + 1);
     }
 
@@ -67,4 +71,22 @@ public class TerrainManager {
         }
         return p;
     }
+
+    public Shape getTerrainShape() {
+
+        return terrain.getTerrainShape();
+    }
+
+    public void damageTerrain(Point2D p) {
+        Shape terrainShape = terrain.getTerrainShape();
+        Area area = new Area(terrainShape);
+        Shape rhs = new Ellipse2D.Double(p.getX() - craterSize / 1.35, p.getY() - craterSize / 1.35, craterSize,
+                craterSize);
+        area.subtract(new Area(rhs));
+        terrain.setTerrainShape(area);
+        damageDone = true;
+        getPointsFromTerrainShape();
+
+    }
+
 }

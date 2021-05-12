@@ -10,7 +10,7 @@ import java.awt.image.BufferedImage;
 public class Projectile {
 
     private int x, y, ix, iy;
-    private int dv = 30;
+    private int dx, dy;
     private int circleSize = 10;
     private boolean destroyed = false;
 
@@ -26,9 +26,10 @@ public class Projectile {
         this.tank = tank;
         this.angle = getAngle();
         setAffineTransform();
+        dx = dy = tank.getPower();
         this.ix = (int) at.getTranslateX();
         this.iy = (int) at.getTranslateY();
-        boundingRect = null;
+        boundingRect = new Rectangle2D.Double(ix, iy, circleSize, circleSize);
         t = 0;
     }
 
@@ -71,6 +72,7 @@ public class Projectile {
         // Rectangle2D rect = boundingRect;
         // System.out.println(rect);
         calculateTrajectory();
+
         // at.translate(dx, 0);
         at.setToTranslation(x, y);
         at.rotate(angle);
@@ -102,9 +104,12 @@ public class Projectile {
     }
 
     private void calculateTrajectory() {
-        // System.out.println(Math.toDegrees(angle));
-        x = (int) (this.ix - (dv * t * Math.cos(angle)));
-        y = (int) (this.iy - ((dv * t * Math.sin(angle)) - (0.5 * g * t * t)));
+        if (x >= GameWindow.pWidth || x < 0)
+            destroyed = true;
+
+        x = (int) (this.ix - (dx * t * Math.cos(angle)));
+
+        y = (int) (this.iy - ((dy * t * Math.sin(angle)) - (0.5 * g * t * t)));
         t++;
         // x = ix;
         // y = iy;
@@ -112,6 +117,29 @@ public class Projectile {
 
     public Shape getBoundingRect() {
         return boundingRect;
+    }
+
+    public Point2D collisionCheck(TerrainManager terrainManager) {
+
+        Shape terrainShape = terrainManager.getTerrainShape();
+        boolean didCollide = terrainShape.intersects(boundingRect.getBounds2D());
+        if (didCollide) {
+            destroyed = true;
+            return terrainManager.getIndex(x);
+        }
+        return null;
+    }
+
+    public Tank collisionCheck(Tank t2) {
+        if (t2.getBoundingRect().intersects(boundingRect.getBounds2D())) {
+            destroyed = true;
+            return t2;
+        }
+        if (tank.getBoundingRect().intersects(boundingRect.getBounds2D()) && t > 3) {
+            destroyed = true;
+            return tank;
+        }
+        return null;
     }
 
 }
