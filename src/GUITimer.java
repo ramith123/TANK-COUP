@@ -9,6 +9,7 @@ public class GUITimer {
     private GUITimer() {
 
         startTime = System.currentTimeMillis();
+        timer = roundTime;
     }
 
     public static GUITimer getInstance() {
@@ -22,6 +23,8 @@ public class GUITimer {
             currTime = System.currentTimeMillis();
         timeChange = (currTime - startTime);
         timer = (int) ((roundTime - timeChange / 1000));
+        if (timer > roundTime)
+            return roundTime;
         return timer;
 
     }

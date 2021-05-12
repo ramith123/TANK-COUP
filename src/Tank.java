@@ -34,8 +34,8 @@ public class Tank {
     private double health = 100;
     private double fuel, maxFuelAmount;
     private int power;
-    private int powerUpperLimit = 50;
-    private int powerLowerLimit = 20;
+    public int powerUpperLimit = 80;
+    public int powerLowerLimit = 20;
     private TerrainManager terrainManager;
 
     public Tank(int x, int y, Color color, int fuelAmount, TerrainEntityManager terrainEntityManager) {

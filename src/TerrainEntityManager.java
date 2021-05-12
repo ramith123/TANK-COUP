@@ -12,13 +12,15 @@ public class TerrainEntityManager {
 
     private int p2TankAngle = 150;
     private int p1TankAngle = 30;
-    private int fuelAmt = 15;
+    private int fuelAmt = 25;
     private int round;
 
     private JFrame window;
     private TerrainManager terrainManager;
     private int roundStatus;
     private GUITimer timer;
+    private GameGUI gameGUI;
+    private PowerUpManager powerUpManager;
 
     /*
      * private GraphicsConfiguration gc;
@@ -40,6 +42,8 @@ public class TerrainEntityManager {
         t2 = new Tank(GameWindow.pWidth - 100, 200, Color.RED, fuelAmt, this);
         t2.rotateBarrel(p2TankAngle);
         getRandomTank();
+        gameGUI = new GameGUI(t1, t2, this, window);
+        powerUpManager = new PowerUpManager();
     }
 
     private void getRandomTank() {
@@ -62,6 +66,7 @@ public class TerrainEntityManager {
     }
 
     private void nextRound() {
+        powerUpManager.getPowerUp();
         currentTank.resetFuel();
         switchTanks();
         roundStatus = 0;
@@ -79,18 +84,24 @@ public class TerrainEntityManager {
         t2.draw(g);
         if (shot != null)
             shot.draw(g);
+        gameGUI.draw(g);
+        powerUpManager.draw(g);
     }
 
     public void gameUpdate() {
+        powerUpManager.move();
 
         if (shot != null) {
             shot.move();
+            powerUpManager.powerUpCollision(shot.getBoundingRect());
+
         }
         destroyProjectile();
         checkHealth();
         // decreaseTime();
         timer.getTimer();
         timeCheck();
+        gameGUI.gameUpdate();
 
     }
 
@@ -141,6 +152,7 @@ public class TerrainEntityManager {
         if (shot != null) {
             p = shot.collisionCheck(terrainManager);
             Tank tankHit = shot.collisionCheck(otherTank);
+            powerUpManager.activatePowerUp(currentTank, tankHit);
             if (shot.isDestroyed()) {
                 shot = null;
                 nextRound();
@@ -187,6 +199,20 @@ public class TerrainEntityManager {
             timer.resumeTimer();
         else
             timer.pauseTimer();
+    }
+
+    public void unPauseGame() {
+        if (timer.isPaused())
+            timer.resumeTimer();
+
+    }
+
+    public void pauseGame() {
+        timer.pauseTimer();
+    }
+
+    public Tank getCurrentTank() {
+        return currentTank;
     }
 
 }

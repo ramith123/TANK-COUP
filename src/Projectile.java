@@ -18,7 +18,7 @@ public class Projectile {
     AffineTransform at;
     private Tank tank;
     private int t;
-    private double g = 3;
+    private double g = 4;
     private Shape boundingRect;
 
     public Projectile(Tank tank) {
@@ -71,7 +71,7 @@ public class Projectile {
     public void move() {
         // Rectangle2D rect = boundingRect;
         // System.out.println(rect);
-        calculateTrajectory();
+        calculateTrajectory(0);
 
         // at.translate(dx, 0);
         at.setToTranslation(x, y);
@@ -103,13 +103,13 @@ public class Projectile {
         this.destroyed = destroyed;
     }
 
-    private void calculateTrajectory() {
+    private void calculateTrajectory(int timeBack) {
         if (x >= GameWindow.pWidth || x < 0)
             destroyed = true;
 
-        x = (int) (this.ix - (dx * t * Math.cos(angle)));
+        x = (int) (this.ix - (dx * (t - timeBack) * Math.cos(angle)));
 
-        y = (int) (this.iy - ((dy * t * Math.sin(angle)) - (0.5 * g * t * t)));
+        y = (int) (this.iy - ((dy * (t - timeBack) * Math.sin(angle)) - (0.5 * g * t * t)));
         t++;
         // x = ix;
         // y = iy;

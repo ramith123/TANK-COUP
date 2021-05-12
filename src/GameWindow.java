@@ -10,7 +10,6 @@ public class GameWindow extends JFrame implements Runnable, KeyListener {
 	private int widthOffset = 7;
 	public static int pWidth = 1080;
 	public static int pHeight = 720;
-
 	private Thread gameThread = null; // the thread that controls the game
 	private volatile boolean isRunning = false; // used to stop the game thread
 
@@ -30,6 +29,7 @@ public class GameWindow extends JFrame implements Runnable, KeyListener {
 
 		initFullScreen();
 		image = new BufferedImage(pWidth, pHeight, BufferedImage.TYPE_INT_ARGB);
+		terrainEntityManager = new TerrainEntityManager(this);
 		// soundManager = SoundManager.getInstance();
 		addKeyListener(this);
 		startGame();
@@ -41,11 +41,11 @@ public class GameWindow extends JFrame implements Runnable, KeyListener {
 		try {
 			isRunning = true;
 			while (isRunning) {
-				if (isPaused == false) {
-					gameUpdate();
-				}
+
+				gameUpdate();
+
 				draw();
-				Thread.sleep(30);
+				Thread.sleep(42);
 			}
 		} catch (InterruptedException e) {
 		}
@@ -84,7 +84,6 @@ public class GameWindow extends JFrame implements Runnable, KeyListener {
 	public void gameUpdate() {
 		if (!isPaused) {
 			terrainEntityManager.gameUpdate();
-
 		}
 
 	}
@@ -114,8 +113,9 @@ public class GameWindow extends JFrame implements Runnable, KeyListener {
 	public void gameRender(Graphics gScr) { // draw the game objects
 
 		Graphics2D imageContext = (Graphics2D) image.getGraphics();
+		imageContext.setBackground(Color.WHITE);
+		imageContext.clearRect(0, 0, pWidth, pHeight);
 
-		imageContext.fillRect(0, 0, pWidth, pHeight);
 		terrainEntityManager.draw(imageContext);
 		Graphics2D g2 = (Graphics2D) gScr;
 		g2.drawImage(image, widthOffset, heightOffset, pWidth, pHeight, null);
@@ -178,7 +178,8 @@ public class GameWindow extends JFrame implements Runnable, KeyListener {
 
 	private void startGame() {
 		if (gameThread == null) {
-			terrainEntityManager = new TerrainEntityManager(this);
+			// terrainEntityManager = new TerrainEntityManager(this);
+
 			gameThread = new Thread(this);
 			gameThread.start();
 
