@@ -23,9 +23,11 @@ public class GameWindow extends JFrame implements Runnable, KeyListener {
 	private BufferStrategy bufferStrategy;
 
 	private TerrainEntityManager terrainEntityManager;
+	private boolean gameStart, gameOver, gameQuit, gameMute;
 
 	public GameWindow() {
 		super("TANK COUP");
+		gameStart = gameOver = gameQuit = gameMute = false;
 
 		initFullScreen();
 		image = new BufferedImage(pWidth, pHeight, BufferedImage.TYPE_INT_ARGB);
@@ -43,7 +45,6 @@ public class GameWindow extends JFrame implements Runnable, KeyListener {
 			while (isRunning) {
 
 				gameUpdate();
-
 				draw();
 				Thread.sleep(42);
 			}
@@ -82,8 +83,10 @@ public class GameWindow extends JFrame implements Runnable, KeyListener {
 	}
 
 	public void gameUpdate() {
-		if (!isPaused) {
+		if (gameStart) {
 			terrainEntityManager.gameUpdate();
+		} else {
+
 		}
 
 	}
@@ -111,15 +114,21 @@ public class GameWindow extends JFrame implements Runnable, KeyListener {
 	}
 
 	public void gameRender(Graphics gScr) { // draw the game objects
-
 		Graphics2D imageContext = (Graphics2D) image.getGraphics();
+
 		imageContext.setBackground(Color.WHITE);
 		imageContext.clearRect(0, 0, pWidth, pHeight);
+		if (gameStart)
+			terrainEntityManager.draw(imageContext);
+		else {
+			terrainEntityManager.pauseGame();
+			terrainEntityManager.drawStartScreen(imageContext);
+			image = Util.blurImage(image);
+		}
 
-		terrainEntityManager.draw(imageContext);
 		Graphics2D g2 = (Graphics2D) gScr;
-		g2.drawImage(image, widthOffset, heightOffset, pWidth, pHeight, null);
 
+		g2.drawImage(image, widthOffset, heightOffset, pWidth, pHeight, null);
 		imageContext.dispose();
 		g2.dispose();
 	}
@@ -179,7 +188,6 @@ public class GameWindow extends JFrame implements Runnable, KeyListener {
 	private void startGame() {
 		if (gameThread == null) {
 			// terrainEntityManager = new TerrainEntityManager(this);
-
 			gameThread = new Thread(this);
 			gameThread.start();
 
@@ -234,7 +242,12 @@ public class GameWindow extends JFrame implements Runnable, KeyListener {
 	@Override
 	public void keyReleased(KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-			terrainEntityManager.spaceKeyPressed();
+			if (!gameStart) {
+				gameStart = true;
+				terrainEntityManager.unPauseGame();
+			} else {
+				terrainEntityManager.spaceKeyPressed();
+			}
 		}
 	}
 

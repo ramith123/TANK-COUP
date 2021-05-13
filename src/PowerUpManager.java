@@ -36,7 +36,7 @@ public class PowerUpManager {
     }
 
     public void getPowerUp() {
-        if (powerUpDidCollide || !isPowerUp()) {
+        if (powerUpDidCollide || !isPowerUp() || terrainEntityManager.getRound() % 4 == 0) {
 
             activePowerUp = getRequestedPowerUp();
             powerUpDidCollide = false;

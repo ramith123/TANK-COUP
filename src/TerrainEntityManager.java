@@ -34,7 +34,7 @@ public class TerrainEntityManager {
         round = 1;
         roundStatus = 0;
         timer = GUITimer.getInstance();
-        timer.pauseTimer();
+        // timer.pauseTimer();
         this.window = window;
         terrainManager = new TerrainManager();
         t1 = new Tank(100, 200, Color.GREEN, fuelAmt, this);
@@ -86,6 +86,13 @@ public class TerrainEntityManager {
             shot.draw(g);
         gameGUI.draw(g);
         powerUpManager.draw(g);
+    }
+
+    public void drawStartScreen(Graphics2D g) {
+        terrainManager.draw(g);
+        t1.draw(g);
+        t2.draw(g);
+
     }
 
     public void gameUpdate() {
@@ -220,6 +227,10 @@ public class TerrainEntityManager {
 
     public int getRound() {
         return round;
+    }
+
+    public void endGame() {
+
     }
 
 }
