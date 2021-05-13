@@ -31,7 +31,7 @@ public class TerrainEntityManager {
      */
 
     public TerrainEntityManager(JFrame window) {
-        round = 0;
+        round = 1;
         roundStatus = 0;
         timer = GUITimer.getInstance();
         timer.pauseTimer();
@@ -43,7 +43,7 @@ public class TerrainEntityManager {
         t2.rotateBarrel(p2TankAngle);
         getRandomTank();
         gameGUI = new GameGUI(t1, t2, this, window);
-        powerUpManager = new PowerUpManager();
+        powerUpManager = new PowerUpManager(this);
     }
 
     private void getRandomTank() {
@@ -59,7 +59,7 @@ public class TerrainEntityManager {
 
     }
 
-    private void switchTanks() {
+    void switchTanks() {
         Tank temp = currentTank;
         currentTank = otherTank;
         otherTank = temp;
@@ -114,10 +114,13 @@ public class TerrainEntityManager {
     private void checkHealth() {
         if (t1.getHealth() <= 0 && t2.getHealth() <= 0) {
             // TODO: draw
+            pauseGame();
 
         } else if (t1.getHealth() <= 0) {
+            pauseGame();
             // TODO: p2 wins
         } else if (t2.getHealth() <= 0) {
+            pauseGame();
             // TODO:P1 wins
 
         }
@@ -152,9 +155,9 @@ public class TerrainEntityManager {
         if (shot != null) {
             p = shot.collisionCheck(terrainManager);
             Tank tankHit = shot.collisionCheck(otherTank);
-            powerUpManager.activatePowerUp(currentTank, tankHit);
             if (shot.isDestroyed()) {
                 shot = null;
+                powerUpManager.activatePowerUp(currentTank, tankHit);
                 nextRound();
             }
             if (tankHit != null) {
@@ -213,6 +216,10 @@ public class TerrainEntityManager {
 
     public Tank getCurrentTank() {
         return currentTank;
+    }
+
+    public int getRound() {
+        return round;
     }
 
 }

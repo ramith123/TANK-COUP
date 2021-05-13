@@ -11,8 +11,10 @@ public class PowerUp {
     private ImageManager imageManager;
     private Image image;
     private int x, y;
+    private String name;
 
     public PowerUp(String name) {
+        this.name = name;
         y = 100;
         x = getRandomX();
         imageManager = ImageManager.getInstance();
@@ -43,6 +45,12 @@ public class PowerUp {
 
     public Rectangle2D getBounds() {
         return new Rectangle2D.Double(x, y, image.getWidth(null), image.getHeight(null));
+    }
+
+    @Override
+    public String toString() {
+        // TODO Auto-generated method stub
+        return name;
     }
 
 }

@@ -12,10 +12,12 @@ public class PowerUpManager {
     private PowerUp activePowerUp;
     private boolean powerUpDidCollide = false;
     private Random rand;
+    private TerrainEntityManager terrainEntityManager;
 
     private int initX, initY;
 
-    public PowerUpManager() {
+    public PowerUpManager(TerrainEntityManager terrainEntityManager) {
+        this.terrainEntityManager = terrainEntityManager;
         activePowerUp = null;
         rand = new Random();
 
@@ -36,7 +38,7 @@ public class PowerUpManager {
     public void getPowerUp() {
         if (powerUpDidCollide || !isPowerUp()) {
 
-            activePowerUp = new PowerUp("health");
+            activePowerUp = getRequestedPowerUp();
             powerUpDidCollide = false;
         }
 
@@ -47,7 +49,7 @@ public class PowerUpManager {
     }
 
     public void powerUpCollision(Shape boundingRect) {
-        if (activePowerUp != null && !powerUpDidCollide)
+        if (isPowerUp() && !powerUpDidCollide)
             powerUpDidCollide = boundingRect.intersects(activePowerUp.getBounds());
     }
 
@@ -61,8 +63,37 @@ public class PowerUpManager {
         if (!powerUpDidCollide)
             return;
 
+        if (isPowerUp()) {
+            if (activePowerUp.toString().equals("health")) {
+                currentTank.restoreHealth();
+            } else if (activePowerUp.toString().equals("turn")) {
+                terrainEntityManager.switchTanks();
+            } else if (activePowerUp.toString().equals("damage") && hitTank != null) {
+                System.out.println("here");
+                hitTank.decreaseHealth();
+            } else if (activePowerUp.toString().equals("death") && hitTank != null) {
+                hitTank.instantDeath();
+
+            }
+        }
+
         activePowerUp = null;
 
+    }
+
+    private PowerUp getRequestedPowerUp() {
+        int n = rand.nextInt(100);
+
+        if (n > 80)
+            return new PowerUp("health");
+        else if (n > 50)
+            return new PowerUp("turn");
+        else if (n > 40)
+            return new PowerUp("damage");
+        else if (n > 38)
+            return new PowerUp("death");
+
+        return null;
     }
 
 }
