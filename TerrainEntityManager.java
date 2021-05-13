@@ -140,7 +140,7 @@ public class TerrainEntityManager {
         if (roundStatus == 0)
             currentTank.moveRight();
         else if (roundStatus == 1)
-            currentTank.changeBarrelAngle(-8);
+            currentTank.changeBarrelAngleRight();
 
     }
 
@@ -150,7 +150,7 @@ public class TerrainEntityManager {
         if (roundStatus == 0)
             currentTank.moveLeft();
         else if (roundStatus == 1)
-            currentTank.changeBarrelAngle(8);
+            currentTank.changeBarrelAngleLeft();
     }
 
     public void createProjectile() {

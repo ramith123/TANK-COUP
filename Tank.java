@@ -24,6 +24,7 @@ public class Tank {
     private double tankRotation, barrelRotation;
     private int dx = 5;
     private boolean tanksPlaced = false;
+    private int angleChange = 4;
 
     private double railShortWidth, railLongWidth;
     BufferedImage image;
@@ -240,8 +241,12 @@ public class Tank {
         barrelRotation = Math.toRadians(-degree);
     }
 
-    public void changeBarrelAngle(double angle) {
-        rotateBarrel(-Math.toDegrees(barrelRotation) + angle);
+    public void changeBarrelAngleRight() {
+        rotateBarrel(-Math.toDegrees(barrelRotation) - angleChange);
+    }
+
+    public void changeBarrelAngleLeft() {
+        rotateBarrel(-Math.toDegrees(barrelRotation) + angleChange);
     }
 
     public int getSpeed() {
@@ -320,14 +325,12 @@ public class Tank {
         power += by;
         if (power > powerUpperLimit)
             power = powerUpperLimit;
-        System.out.println(power);
     }
 
     public void decreasePower(int by) {
         power -= by;
         if (power < powerLowerLimit)
             power = powerLowerLimit;
-        System.out.println(power);
     }
 
     public int getPower() {

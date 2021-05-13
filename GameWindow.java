@@ -1,10 +1,12 @@
 import javax.swing.*; // need this for GUI objects
+import javax.swing.event.MouseInputListener;
+
 import java.awt.*; // need this for certain AWT classes
 import java.awt.image.BufferedImage;
 import java.awt.event.*;
 import java.awt.image.BufferStrategy; // need this to implement page flipping
 
-public class GameWindow extends JFrame implements Runnable, KeyListener {
+public class GameWindow extends JFrame implements Runnable, KeyListener, MouseInputListener {
 	private static final int NUM_BUFFERS = 2; // used for page flipping
 	private int heightOffset = 30;
 	private int widthOffset = 7;
@@ -13,6 +15,7 @@ public class GameWindow extends JFrame implements Runnable, KeyListener {
 	private Thread gameThread = null; // the thread that controls the game
 	private volatile boolean isRunning = false; // used to stop the game thread
 
+	private StartWindow startWindow;
 	private BufferedImage image; // drawing area for each frame
 
 	private boolean finishedOff = false; // used when the game terminates
@@ -22,8 +25,11 @@ public class GameWindow extends JFrame implements Runnable, KeyListener {
 	private Graphics gScr;
 	private BufferStrategy bufferStrategy;
 
-	private TerrainEntityManager terrainEntityManager;
-	private boolean gameStart, gameOver, gameQuit, gameMute;
+	TerrainEntityManager terrainEntityManager;
+	boolean gameStart;
+	private boolean gameOver;
+	private boolean gameQuit;
+	private boolean gameMute;
 
 	public GameWindow() {
 		super("TANK COUP");
@@ -32,8 +38,11 @@ public class GameWindow extends JFrame implements Runnable, KeyListener {
 		initFullScreen();
 		image = new BufferedImage(pWidth, pHeight, BufferedImage.TYPE_INT_ARGB);
 		terrainEntityManager = new TerrainEntityManager(this);
+		startWindow = new StartWindow(this);
 		// soundManager = SoundManager.getInstance();
 		addKeyListener(this);
+		addMouseMotionListener(this);
+		addMouseListener(this);
 		startGame();
 	}
 
@@ -60,7 +69,7 @@ public class GameWindow extends JFrame implements Runnable, KeyListener {
 	 * game terminates.
 	 */
 
-	private void finishOff() {
+	public void finishOff() {
 		if (!finishedOff) {
 			finishedOff = true;
 			restoreScreen();
@@ -123,7 +132,10 @@ public class GameWindow extends JFrame implements Runnable, KeyListener {
 		else {
 			terrainEntityManager.pauseGame();
 			terrainEntityManager.drawStartScreen(imageContext);
+			imageContext.dispose();
 			image = Util.blurImage(image);
+			imageContext = (Graphics2D) image.getGraphics();
+			startWindow.draw(imageContext);
 		}
 
 		Graphics2D g2 = (Graphics2D) gScr;
@@ -249,6 +261,48 @@ public class GameWindow extends JFrame implements Runnable, KeyListener {
 				terrainEntityManager.spaceKeyPressed();
 			}
 		}
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+		startWindow.mouse(e.getX(), e.getY(), true);
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		startWindow.mouse(e.getX(), e.getY(), false);
+
 	}
 
 	// implementation of methods in KeyListener interface

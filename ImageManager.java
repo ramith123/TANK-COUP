@@ -10,7 +10,7 @@ import java.util.HashMap;
 public class ImageManager {
     private static ImageManager instance = null; // keeps track of Singleton instance
 
-    private String directory = "src/images";
+    private String directory = "images";
     HashMap<String, Image> images;
 
     private ImageManager() {
