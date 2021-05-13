@@ -26,14 +26,13 @@ public class GameWindow extends JFrame implements Runnable, KeyListener, MouseIn
 	private BufferStrategy bufferStrategy;
 
 	TerrainEntityManager terrainEntityManager;
-	boolean gameStart;
-	private boolean gameOver;
-	private boolean gameQuit;
-	private boolean gameMute;
+	boolean gameStart, blurScreen, gameOver;
+	private GameOver gameOverScreen;
 
 	public GameWindow() {
 		super("TANK COUP");
-		gameStart = gameOver = gameQuit = gameMute = false;
+		gameStart = gameOver = false;
+		blurScreen = true;
 
 		initFullScreen();
 		image = new BufferedImage(pWidth, pHeight, BufferedImage.TYPE_INT_ARGB);
@@ -52,7 +51,6 @@ public class GameWindow extends JFrame implements Runnable, KeyListener, MouseIn
 		try {
 			isRunning = true;
 			while (isRunning) {
-
 				gameUpdate();
 				draw();
 				Thread.sleep(42);
@@ -127,15 +125,21 @@ public class GameWindow extends JFrame implements Runnable, KeyListener, MouseIn
 
 		imageContext.setBackground(Color.WHITE);
 		imageContext.clearRect(0, 0, pWidth, pHeight);
-		if (gameStart)
-			terrainEntityManager.draw(imageContext);
-		else {
+		if (blurScreen) {
 			terrainEntityManager.pauseGame();
 			terrainEntityManager.drawStartScreen(imageContext);
 			imageContext.dispose();
 			image = Util.blurImage(image);
 			imageContext = (Graphics2D) image.getGraphics();
+		}
+		if (gameStart && !blurScreen) {
+			terrainEntityManager.draw(imageContext);
+		}
+		if (!gameStart && blurScreen) {
 			startWindow.draw(imageContext);
+		}
+		if (gameOver && gameStart && blurScreen) {
+			gameOverScreen.draw(imageContext);
 		}
 
 		Graphics2D g2 = (Graphics2D) gScr;
@@ -197,33 +201,16 @@ public class GameWindow extends JFrame implements Runnable, KeyListener, MouseIn
 
 	// Specify screen areas for the buttons and create bounding rectangles
 
-	private void startGame() {
+	public void startGame() {
 		if (gameThread == null) {
-			// terrainEntityManager = new TerrainEntityManager(this);
 			gameThread = new Thread(this);
 			gameThread.start();
 
 		}
+
 	}
 
 	// displays a message to the screen when the user stops the game
-
-	private void gameOverMessage(Graphics g1) {
-		Graphics2D g = (Graphics2D) g1;
-		// g.setClip(0, 0, pWidth, pHeight);
-		Font font = new Font("SansSerif", Font.BOLD, 24);
-		FontMetrics metrics = this.getFontMetrics(font);
-
-		String msg = "Game Over. Thanks for playing!";
-
-		int x = (pWidth - metrics.stringWidth(msg)) / 2;
-		int y = (pHeight - metrics.getHeight()) / 2;
-
-		g.setColor(Color.BLUE);
-		g.setFont(font);
-		g.drawString(msg, x, y);
-
-	}
 
 	@Override
 	public void keyTyped(KeyEvent e) {
@@ -245,8 +232,9 @@ public class GameWindow extends JFrame implements Runnable, KeyListener, MouseIn
 		if (e.getKeyCode() == KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_S) {
 			terrainEntityManager.downKeyPressed();
 		}
-		if (e.getKeyCode() == KeyEvent.VK_P) {
+		if (e.getKeyCode() == KeyEvent.VK_P || e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 			terrainEntityManager.pauseKeyPressed();
+			blurScreen = blurScreen ? false : true;
 		}
 
 	}
@@ -256,6 +244,8 @@ public class GameWindow extends JFrame implements Runnable, KeyListener, MouseIn
 		if (e.getKeyCode() == KeyEvent.VK_SPACE) {
 			if (!gameStart) {
 				gameStart = true;
+				blurScreen = gameOver = false;
+
 				terrainEntityManager.unPauseGame();
 			} else {
 				terrainEntityManager.spaceKeyPressed();
@@ -266,7 +256,10 @@ public class GameWindow extends JFrame implements Runnable, KeyListener, MouseIn
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
-		startWindow.mouse(e.getX(), e.getY(), true);
+		if (!gameStart && !gameOver)
+			startWindow.mouse(e.getX(), e.getY(), true);
+		if (gameOver)
+			gameOverScreen.mouse(e.getX(), e.getY(), true);
 	}
 
 	@Override
@@ -301,15 +294,21 @@ public class GameWindow extends JFrame implements Runnable, KeyListener, MouseIn
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
-		startWindow.mouse(e.getX(), e.getY(), false);
+		if (!gameStart && !gameOver)
+			startWindow.mouse(e.getX(), e.getY(), false);
+		if (gameOver)
+			gameOverScreen.mouse(e.getX(), e.getY(), false);
 
 	}
 
-	// implementation of methods in KeyListener interface
+	public void gameOver(int win) {
+		gameOverScreen = new GameOver(this, win);
+		gameOver = true;
+		blurScreen = true;
+	}
 
-	/*
-	 * This method handles mouse clicks on one of the buttons (Pause, Stop, Start
-	 * Anim, Pause Anim, and Quit).
-	 */
+	public void restartGame() {
+		this.terrainEntityManager = new TerrainEntityManager(this);
+	}
 
 }

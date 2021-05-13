@@ -54,6 +54,7 @@ public class StartWindow {
             if (click) {
                 System.out.println("test");
                 window.gameStart = true;
+                window.blurScreen = false;
                 window.terrainEntityManager.unPauseGame();
             }
         } else {

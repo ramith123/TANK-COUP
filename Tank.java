@@ -12,8 +12,8 @@ public class Tank {
     private int gapSize = 10;
     private int verticalOffset = 1;
     private int x, y;
-    private int xSIZE = 200;
-    private int ySIZE = 150;
+    public int xSIZE = 200;
+    public int ySIZE = 150;
     private int railStrokeSize = 3;
     private int bodyStrokeSize = 1;
     private int barHeight = 10;
@@ -373,4 +373,11 @@ public class Tank {
         fuel = maxFuelAmount;
     }
 
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
 }

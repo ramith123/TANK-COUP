@@ -21,6 +21,8 @@ public class TerrainEntityManager {
     private GUITimer timer;
     private GameGUI gameGUI;
     private PowerUpManager powerUpManager;
+    private Animation smallExplosion, bigExplosion;
+    private ImageManager imageManager;
 
     /*
      * private GraphicsConfiguration gc;
@@ -31,6 +33,7 @@ public class TerrainEntityManager {
      */
 
     public TerrainEntityManager(JFrame window) {
+        imageManager = ImageManager.getInstance();
         round = 1;
         roundStatus = 0;
         timer = GUITimer.getInstance();
@@ -44,6 +47,7 @@ public class TerrainEntityManager {
         getRandomTank();
         gameGUI = new GameGUI(t1, t2, this, window);
         powerUpManager = new PowerUpManager(this);
+        loadAnimation();
     }
 
     private void getRandomTank() {
@@ -86,6 +90,7 @@ public class TerrainEntityManager {
             shot.draw(g);
         gameGUI.draw(g);
         powerUpManager.draw(g);
+        smallExplosion.draw(g);
     }
 
     public void drawStartScreen(Graphics2D g) {
@@ -109,6 +114,7 @@ public class TerrainEntityManager {
         timer.getTimer();
         timeCheck();
         gameGUI.gameUpdate();
+        smallExplosion.update();
 
     }
 
@@ -120,13 +126,15 @@ public class TerrainEntityManager {
 
     private void checkHealth() {
         if (t1.getHealth() <= 0 && t2.getHealth() <= 0) {
-            // TODO: draw
+            ((GameWindow) window).gameOver(2);
             pauseGame();
 
         } else if (t1.getHealth() <= 0) {
+            ((GameWindow) window).gameOver(1);
             pauseGame();
             // TODO: p2 wins
         } else if (t2.getHealth() <= 0) {
+            ((GameWindow) window).gameOver(0);
             pauseGame();
             // TODO:P1 wins
 
@@ -169,6 +177,7 @@ public class TerrainEntityManager {
             }
             if (tankHit != null) {
                 tankHit.decreaseHealth();
+                smallExplosion.start(tankHit.getTankTransform());
             }
             if (p != null)
                 terrainManager.damageTerrain(p);
@@ -233,4 +242,31 @@ public class TerrainEntityManager {
 
     }
 
+    private void loadAnimation() {
+
+        Image animImage1 = imageManager.getImage("se_01.png");
+        Image animImage2 = imageManager.getImage("se_02.png");
+        Image animImage3 = imageManager.getImage("se_03.png");
+        Image animImage4 = imageManager.getImage("se_04.png");
+        Image animImage5 = imageManager.getImage("se_05.png");
+        Image animImage6 = imageManager.getImage("se_06.png");
+        Image animImage7 = imageManager.getImage("se_07.png");
+        Image animImage8 = imageManager.getImage("se_08.png");
+        Image animImage9 = imageManager.getImage("se_09.png");
+
+        // create animation object and insert frames
+
+        smallExplosion = new Animation(200, 200);
+
+        smallExplosion.addFrame(animImage1, 70);
+        smallExplosion.addFrame(animImage2, 70);
+        smallExplosion.addFrame(animImage3, 70);
+        smallExplosion.addFrame(animImage4, 70);
+        smallExplosion.addFrame(animImage5, 70);
+        smallExplosion.addFrame(animImage6, 70);
+        smallExplosion.addFrame(animImage7, 70);
+        smallExplosion.addFrame(animImage8, 70);
+        smallExplosion.addFrame(animImage9, 70);
+
+    }
 }
