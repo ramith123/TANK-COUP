@@ -166,6 +166,8 @@ public class TerrainEntityManager {
     }
 
     public void createProjectile() {
+
+        soundManager.playSound("shot.wav", false);
         shot = new Projectile(currentTank);
     }
 
