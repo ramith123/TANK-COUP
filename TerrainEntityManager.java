@@ -23,6 +23,7 @@ public class TerrainEntityManager {
     private PowerUpManager powerUpManager;
     private Animation smallExplosion, largeExplosion;
     private ImageManager imageManager;
+    private SoundManager soundManager;
 
     /*
      * private GraphicsConfiguration gc;
@@ -34,6 +35,7 @@ public class TerrainEntityManager {
 
     public TerrainEntityManager(JFrame window) {
         imageManager = ImageManager.getInstance();
+        soundManager = SoundManager.getInstance();
         round = 1;
         roundStatus = 0;
         timer = GUITimer.getInstance();
@@ -145,9 +147,10 @@ public class TerrainEntityManager {
 
         if (timer.isPaused())
             return;
-        if (roundStatus == 0)
+        if (roundStatus == 0) {
+
             currentTank.moveRight();
-        else if (roundStatus == 1)
+        } else if (roundStatus == 1)
             currentTank.changeBarrelAngleRight();
 
     }
@@ -155,9 +158,10 @@ public class TerrainEntityManager {
     public void leftKeyPressed() {
         if (timer.isPaused())
             return;
-        if (roundStatus == 0)
+        if (roundStatus == 0) {
+
             currentTank.moveLeft();
-        else if (roundStatus == 1)
+        } else if (roundStatus == 1)
             currentTank.changeBarrelAngleLeft();
     }
 
@@ -176,11 +180,15 @@ public class TerrainEntityManager {
                 nextRound();
             }
             if (tankHit != null) {
+                soundManager.playSound("hit.wav", false);
                 tankHit.decreaseHealth();
                 smallExplosion.start(tankHit.getTankTransform());
             }
-            if (p != null)
+            if (p != null) {
+                soundManager.playSound("groundBoom.wav", false);
                 terrainManager.damageTerrain(p);
+
+            }
         }
 
     }

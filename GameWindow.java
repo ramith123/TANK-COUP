@@ -26,14 +26,16 @@ public class GameWindow extends JFrame implements Runnable, KeyListener, MouseIn
 	private BufferStrategy bufferStrategy;
 
 	TerrainEntityManager terrainEntityManager;
-	boolean gameStart, blurScreen, gameOver;
+	boolean gameStart, blurScreen, gameOver, introSound, midSound;
 	private GameOver gameOverScreen;
+	private SoundManager soundManager;
 
 	private GradientPaint backgroundGrad;
 
 	public GameWindow() {
 
 		super("TANK COUP");
+		soundManager = SoundManager.getInstance();
 		Color gradUpperColor = new Color(15, 212, 255);
 		Color gradLowerColor = new Color(155, 255, 237);
 		backgroundGrad = new GradientPaint(pWidth / 2, 0, gradUpperColor, pWidth / 2, pHeight / 2, gradLowerColor);
@@ -134,6 +136,12 @@ public class GameWindow extends JFrame implements Runnable, KeyListener, MouseIn
 		imageContext.setPaint(backgroundGrad);
 		imageContext.fill(new Rectangle.Double(0, 0, pWidth, pHeight));
 		if (blurScreen) {
+			if (!introSound) {
+				soundManager.stopSound("mid.wav");
+				soundManager.playSound("intro.wav", true);
+				introSound = true;
+				midSound = false;
+			}
 			terrainEntityManager.pauseGame();
 			terrainEntityManager.drawStartScreen(imageContext);
 			imageContext.dispose();
@@ -141,6 +149,12 @@ public class GameWindow extends JFrame implements Runnable, KeyListener, MouseIn
 			imageContext = (Graphics2D) image.getGraphics();
 		}
 		if (gameStart && !blurScreen) {
+			if (!midSound) {
+				soundManager.stopSound("intro.wav");
+				soundManager.playSound("mid.wav", true);
+				introSound = false;
+				midSound = true;
+			}
 			terrainEntityManager.draw(imageContext);
 		}
 		if (!gameStart && blurScreen) {

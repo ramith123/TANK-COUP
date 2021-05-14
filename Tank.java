@@ -38,9 +38,11 @@ public class Tank {
     public int powerUpperLimit = 80;
     public int powerLowerLimit = 20;
     private TerrainManager terrainManager;
+    private SoundManager soundManager;
 
     public Tank(int x, int y, Color color, int fuelAmount, TerrainEntityManager terrainEntityManager) {
         terrainManager = terrainEntityManager.getTerrainManager();
+        soundManager = SoundManager.getInstance();
         power = powerLowerLimit;
         fuel = maxFuelAmount = fuelAmount;
         this.x = x;
@@ -78,6 +80,7 @@ public class Tank {
     public void move(Point2D point) {
         // Rectangle2D rect = boundingRect;
         // System.out.println(rect);
+        soundManager.playSound("move.wav", false);
         this.x = (int) point.getX();
         this.y = (int) point.getY();
 

@@ -124,6 +124,7 @@ public class Projectile {
         Shape terrainShape = terrainManager.getTerrainShape();
         boolean didCollide = terrainShape.intersects(boundingRect.getBounds2D());
         if (didCollide) {
+
             destroyed = true;
             return terrainManager.getIndex(x);
         }

@@ -11,12 +11,15 @@ public class PowerUpManager {
     private ImageManager imageManager;
     private PowerUp activePowerUp;
     private boolean powerUpDidCollide = false;
+    private boolean playSound = false;
     private Random rand;
     private TerrainEntityManager terrainEntityManager;
+    private SoundManager soundManager;
 
     private int initX, initY;
 
     public PowerUpManager(TerrainEntityManager terrainEntityManager) {
+        soundManager = SoundManager.getInstance();
         this.terrainEntityManager = terrainEntityManager;
         activePowerUp = null;
         rand = new Random();
@@ -49,8 +52,12 @@ public class PowerUpManager {
     }
 
     public void powerUpCollision(Shape boundingRect) {
-        if (isPowerUp() && !powerUpDidCollide)
+        if (isPowerUp() && !powerUpDidCollide) {
             powerUpDidCollide = boundingRect.intersects(activePowerUp.getBounds());
+            if (powerUpDidCollide && !playSound)
+                soundManager.playSound("power.wav", false);
+
+        }
     }
 
     public boolean isPowerUp() {
