@@ -29,8 +29,14 @@ public class GameWindow extends JFrame implements Runnable, KeyListener, MouseIn
 	boolean gameStart, blurScreen, gameOver;
 	private GameOver gameOverScreen;
 
+	private GradientPaint backgroundGrad;
+
 	public GameWindow() {
+
 		super("TANK COUP");
+		Color gradUpperColor = new Color(15, 212, 255);
+		Color gradLowerColor = new Color(155, 255, 237);
+		backgroundGrad = new GradientPaint(pWidth / 2, 0, gradUpperColor, pWidth / 2, pHeight / 2, gradLowerColor);
 		gameStart = gameOver = false;
 		blurScreen = true;
 
@@ -125,6 +131,8 @@ public class GameWindow extends JFrame implements Runnable, KeyListener, MouseIn
 
 		imageContext.setBackground(Color.WHITE);
 		imageContext.clearRect(0, 0, pWidth, pHeight);
+		imageContext.setPaint(backgroundGrad);
+		imageContext.fill(new Rectangle.Double(0, 0, pWidth, pHeight));
 		if (blurScreen) {
 			terrainEntityManager.pauseGame();
 			terrainEntityManager.drawStartScreen(imageContext);

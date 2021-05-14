@@ -21,7 +21,7 @@ public class TerrainEntityManager {
     private GUITimer timer;
     private GameGUI gameGUI;
     private PowerUpManager powerUpManager;
-    private Animation smallExplosion, bigExplosion;
+    private Animation smallExplosion, largeExplosion;
     private ImageManager imageManager;
 
     /*

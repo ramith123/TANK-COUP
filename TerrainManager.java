@@ -25,7 +25,7 @@ public class TerrainManager {
         Shape s = terrain.getTerrainShape();
         AffineTransform at = g.getTransform();
         at.setToTranslation(0, 0);
-        g.setColor(Color.CYAN);
+        g.setColor(new Color(136, 72, 141));
         g.transform(at);
         // g.setStroke(new BasicStroke(10, BasicStroke.CAP_ROUND,
         // BasicStroke.JOIN_ROUND));

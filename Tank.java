@@ -1,5 +1,5 @@
-import javax.swing.*; // need this for GUI objects
-import javax.swing.border.StrokeBorder;
+// import javax.swing.*; // need this for GUI objects
+// import javax.swing.border.StrokeBorder;
 
 import java.lang.Math;
 import java.awt.geom.*;
@@ -23,7 +23,7 @@ public class Tank {
     private Shape boundingRect;
     private double tankRotation, barrelRotation;
     private int dx = 5;
-    private boolean tanksPlaced = false;
+    // private boolean tanksPlaced = false;
     private int angleChange = 4;
 
     private double railShortWidth, railLongWidth;
@@ -205,16 +205,16 @@ public class Tank {
         return (Color.getHSBColor(c[0], c[1], c[2]));
     }
 
-    private int getYsize() {
-        int[] pixels = image.getRGB(0, 0, xSIZE, ySIZE, null, 0, xSIZE);
-        for (int i = 0; i < pixels.length; i++) {
-            if (pixels[i] != 0) {
-                return i / xSIZE;
-            }
-        }
-        return -1;
+    // private int getYsize() {
+    // int[] pixels = image.getRGB(0, 0, xSIZE, ySIZE, null, 0, xSIZE);
+    // for (int i = 0; i < pixels.length; i++) {
+    // if (pixels[i] != 0) {
+    // return i / xSIZE;
+    // }
+    // }
+    // return -1;
 
-    }
+    // }
 
     public void rotateTank(double degree) {
 
